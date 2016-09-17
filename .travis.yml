@@ -1,0 +1,17 @@
+language: java
+before_deploy:
+  - git config --global user.email "builds@travis-ci.com"
+  - git config --global user.name "Travis CI"
+  - export GIT_TAG=v2.0.0-b$TRAVIS_BUILD_NUMBER
+  - git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
+  - git push origin --tags
+deploy:
+  provider: releases
+  api_key: "2ec64c7c3f5da0fd5e8efda5f4b4035bef206dd7"
+  file: "target/MCSniper.jar"
+  skip_cleanup: true
+  on:
+    tags: false
+branches:
+  except:
+    - /^v2.0.0-b[0-9\-]*/
