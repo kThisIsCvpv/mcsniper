@@ -6,4 +6,13 @@ public class Main {
         
     }
 
+    /**
+     * Log a line
+     *
+     * @param line
+     */
+    public static void log(String line) {
+        System.out.println(line);
+    }
+
 }
