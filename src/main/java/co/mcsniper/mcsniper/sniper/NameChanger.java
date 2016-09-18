@@ -35,10 +35,12 @@ public class NameChanger implements Runnable {
         this.password = password;
         this.log = log;
 
-        String rawSession = this.session;
+        String rawSession = new String(this.session);
         if (rawSession.startsWith("\"") && rawSession.endsWith("\"") && rawSession.length() > 2) {
             rawSession = rawSession.substring(1, rawSession.length() - 1);
         }
+        
+        rawSession = rawSession.substring(rawSession.indexOf('-') + 1);
 
         Map<String, String> arguments = new HashMap<String, String>();
         String[] components = rawSession.split("&");
@@ -51,8 +53,8 @@ public class NameChanger implements Runnable {
             String key = component.substring(0, component.indexOf("="));
             String value = component.substring(component.indexOf("=") + 1, component.length());
             arguments.put(key, value);
-        }
-
+        }        
+        
         this.authToken = arguments.get("___AT");
 
         if (this.authToken == null) {

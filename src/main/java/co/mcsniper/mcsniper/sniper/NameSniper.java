@@ -126,6 +126,14 @@ public class NameSniper implements Runnable {
         this.drone.start();
     }
 
+    public String getName(){
+    	return this.name;
+    }
+    
+    public String getUUID(){
+    	return this.uuid;
+    }
+    
     public long getDate() {
         return this.snipeDate;
     }

@@ -159,6 +159,7 @@ public class MCSniper {
                 long secUntil = (ns.getDate() - System.currentTimeMillis()) / 1000L;
 
                 if (secUntil >= (60) && secUntil <= (3 * 60)) {
+                    System.out.println("UUID of player " + ns.getName() + " is " + ns.getUUID());
                     this.ongoingSnipes.put(snipeid, ns);
                     ns.start();
                 }
@@ -170,6 +171,7 @@ public class MCSniper {
 
                 if (ns.isDone()) {
                     this.ongoingSnipes.remove(snipeid);
+                    System.out.println("User " + ns.getName() + " has disconnected, reason: Disconnected");
                 }
             }
 
