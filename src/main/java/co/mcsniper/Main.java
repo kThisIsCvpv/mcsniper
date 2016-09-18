@@ -1,6 +1,7 @@
 package co.mcsniper;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import co.mcsniper.mcsniper.MCSniper;
 
@@ -13,7 +14,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			new MCSniper(false);
-		} catch (IOException e) {
+		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 		}
 

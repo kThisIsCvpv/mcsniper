@@ -1,6 +1,7 @@
 package co.mcsniper;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,7 +21,7 @@ public class MainServer extends JavaPlugin {
 			public void run() {
 				try {
 					new MCSniper(true);
-				} catch (IOException e) {
+				} catch (IOException | SQLException e) {
 					e.printStackTrace();
 				}
 			}
