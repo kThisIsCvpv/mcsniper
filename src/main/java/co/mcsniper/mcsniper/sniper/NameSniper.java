@@ -119,10 +119,11 @@ public class NameSniper implements Runnable {
                 if (!response.equals("null"))
                     validResponses.add(responseTime + " " + response);
 
-                if (responses.has(response)) {
-                    responses.increment(response);
+                String parsedResponse = response.contains("Exception: ") ? response.substring(0, response.indexOf("Exception: ") + 9) : response;
+                if (responses.has(parsedResponse)) {
+                    responses.increment(parsedResponse);
                 } else {
-                    responses.put(response, 1);
+                    responses.put(parsedResponse, 1);
                 }
             }
 
