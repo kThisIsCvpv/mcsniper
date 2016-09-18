@@ -85,8 +85,10 @@ public class NameChanger implements Runnable {
                 this.main.setSuccessful();
             }
         } catch (Exception ex) {
-            this.log[this.server][this.instance][0] = ex.getClass().getSimpleName();
-            this.log[this.server][this.instance][1] = "0";
+            this.log[this.server][this.instance][0] = ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : "");
+
+            long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
+            this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
         }
     }
 
