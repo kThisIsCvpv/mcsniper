@@ -56,7 +56,8 @@ public class MCSniper {
     public MCSniper(boolean isMinecraft) throws IOException, SQLException, ClassNotFoundException {
         String classPath = MCSniper.class.getResource(MCSniper.class.getSimpleName() + ".class").toString();
 
-        if (!classPath.endsWith("jar")) {
+        if (!classPath.startsWith("jar")) {
+            System.out.println("Invalid class path: " + classPath);
             return;
         }
 

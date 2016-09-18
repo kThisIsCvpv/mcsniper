@@ -84,7 +84,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>co.mcsniper.sniper.Main</mainClass>
+                            <mainClass>co.mcsniper.Main</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Build-Date>${maven.build.timestamp}</Build-Date>
