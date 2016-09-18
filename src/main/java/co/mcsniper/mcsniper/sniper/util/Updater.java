@@ -86,7 +86,10 @@ public class Updater {
                 outputStream.close();
                 inputStream.close();
 
-                System.out.println("File download complete.");
+                System.out.println("File download complete. Restarting...");
+
+                Runtime.getRuntime().exec("killall -9 java");
+                System.exit(0);
                 return true;
             } else {
                 System.out.println("No file to download. Server replied HTTP code: " + responseCode);
