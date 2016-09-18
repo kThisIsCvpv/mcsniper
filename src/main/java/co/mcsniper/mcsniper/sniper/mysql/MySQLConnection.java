@@ -19,13 +19,13 @@ public class MySQLConnection {
         return DriverManager.getConnection("jdbc:mysql://" + this.credentials.getHost() + "/" + this.credentials.getDatabase(), this.credentials.getUsername(), this.credentials.getPassword());
     }
 
-    public void pushLog(String serverName, int snipeID, String name, String time, int success, String log, JSONObject responses) {
+    public void pushLog(String serverName, int snipeID, String name, String time, int success, String log, JSONObject responses, JSONObject config) {
         Connection con = null;
 
         try {
             con = this.createConnection();
 
-            PreparedStatement ps = con.prepareStatement("INSERT INTO `log` (server_name, snipe_id, snipe_name, snipe_time, success, log, responses) VALUES (?, ?, ?, ?, ?, ?, ?);");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO `log` (server_name, snipe_id, snipe_name, snipe_time, success, log, responses, config) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
             ps.setString(1, serverName);
             ps.setInt(2, snipeID);
             ps.setString(3, name);
@@ -33,6 +33,7 @@ public class MySQLConnection {
             ps.setInt(5, success);
             ps.setString(6, log);
             ps.setString(7, responses.toString());
+            ps.setString(8, config.toString());
             ps.execute();
 
             ps.close();

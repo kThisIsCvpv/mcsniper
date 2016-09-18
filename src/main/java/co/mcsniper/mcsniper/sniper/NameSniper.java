@@ -119,7 +119,12 @@ public class NameSniper implements Runnable {
             logBuilder.append("\n");
         }
 
-        this.handler.getMySQL().pushLog(this.handler.getServerName(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString(), responses);
+        JSONObject config = new JSONObject();
+        config.put("proxies", this.proxyAmount);
+        config.put("instances", this.proxyInstances);
+        config.put("offset", this.proxyOffset);
+
+        this.handler.getMySQL().pushLog(this.handler.getServerName(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString(), responses, config);
         done = true;
     }
 
