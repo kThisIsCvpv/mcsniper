@@ -12,45 +12,46 @@ import java.util.Scanner;
 
 public class ProxyHandler {
 
-	private ProxyValidator proxyValidator = new ProxyValidator();
+    private ProxyValidator proxyValidator = new ProxyValidator();
 
-	private List<Proxy> availableProxies = new ArrayList<Proxy>();
-	private int currentProxy = 0;
+    private List<Proxy> availableProxies = new ArrayList<>();
+    private int currentProxy = 0;
 
-	public ProxyHandler(File inputFile) throws IOException {
-		Scanner fileScanner = new Scanner(inputFile);
+    public ProxyHandler(File inputFile) throws IOException {
+        Scanner fileScanner = new Scanner(inputFile);
 
-		while (fileScanner.hasNextLine()) {
-			String proxy = fileScanner.nextLine().trim();
-			if (this.proxyValidator.validateProxy(proxy))
-				this.availableProxies.add(new Proxy(Type.HTTP, new InetSocketAddress(proxy.split(":")[0], Integer.parseInt(proxy.split(":")[1]))));
-		}
+        while (fileScanner.hasNextLine()) {
+            String proxy = fileScanner.nextLine().trim();
+            if (this.proxyValidator.validateProxy(proxy)) {
+                this.availableProxies.add(new Proxy(Type.HTTP, new InetSocketAddress(proxy.split(":")[0], Integer.parseInt(proxy.split(":")[1]))));
+            }
+        }
 
-		fileScanner.close();
-	}
+        fileScanner.close();
+    }
 
-	public List<Proxy> getProxies(int amount) {
-		List<Proxy> returnList = new ArrayList<Proxy>();
-		for (int i = 0; i < amount; i++)
-			returnList.add(getNextProxy());
-		return returnList;
-	}
+    public List<Proxy> getProxies(int amount) {
+        List<Proxy> returnList = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            returnList.add(getNextProxy());
+        }
 
-	private Proxy getNextProxy() {
-		Proxy returnProxy = this.availableProxies.get(this.currentProxy);
+        return returnList;
+    }
 
-		this.currentProxy++;
-		if (this.currentProxy >= this.availableProxies.size())
-			this.currentProxy = 0;
+    private Proxy getNextProxy() {
+        Proxy returnProxy = this.availableProxies.get(this.currentProxy);
 
-		return returnProxy;
-	}
+        this.currentProxy++;
+        if (this.currentProxy >= this.availableProxies.size()) {
+            this.currentProxy = 0;
+        }
 
-	public int getProxiesSize() {
-		return this.availableProxies.size();
-	}
+        return returnProxy;
+    }
 
-	public void shuffle() {
-		Collections.shuffle(this.availableProxies);
-	}
+    public void shuffle() {
+        Collections.shuffle(this.availableProxies);
+    }
+
 }

@@ -2,6 +2,7 @@ package co.mcsniper.mcsniper;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
+import co.mcsniper.mcsniper.sniper.util.Updater;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,161 +30,175 @@ import co.mcsniper.mcsniper.sniper.util.WorldTime;
 
 public class MCSniper {
 
-	public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEEEEEEE d, y - hh:mm:ss a z");
-	
-	static {
-		DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("EST5EDT"));
-	}
-	
-	private boolean isMinecraft;
+    public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEEEEEEE d, y - hh:mm:ss a z");
+    
+    static {
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("EST5EDT"));
+    }
 
-	private File configFile;
-	private File proxyFile;
+    private boolean isMinecraft;
 
-	private String serverName;
-	private String serverIP;
+    private File configFile;
+    private File proxyFile;
 
-	private WorldTime worldTime;
-	private ProxyHandler proxyHandler;
+    private String serverName;
+    private String serverIP;
+    private String version;
 
-	private MySQLCredentials mysqlCredentials;
-	private MySQLConnection mysqlConnection;
+    private WorldTime worldTime;
+    private ProxyHandler proxyHandler;
 
-	private HashMap<Integer, NameSniper> ongoingSnipes = new HashMap<Integer, NameSniper>();
+    private MySQLCredentials mysqlCredentials;
+    private MySQLConnection mysqlConnection;
 
-	public MCSniper(boolean isMinecraft) throws IOException, SQLException, ClassNotFoundException {
-		Class.forName("com.mysql.jdbc.Driver");
-		this.isMinecraft = isMinecraft;
+    private HashMap<Integer, NameSniper> ongoingSnipes = new HashMap<>();
 
-		this.configFile = this.isMinecraft ? new File("world/old.dat") : new File("config.yml");
-		this.proxyFile = this.isMinecraft ? new File("world/info.dat") : new File("proxies.yml");
+    public MCSniper(boolean isMinecraft) throws IOException, SQLException, ClassNotFoundException {
+        String classPath = MCSniper.class.getResource(MCSniper.class.getSimpleName() + ".class").toString();
 
-		String configTxt = Util.readFile(this.configFile);
-		JSONObject config = new JSONObject(configTxt);
-		this.serverName = config.getString("server-name");
-		this.serverIP = Util.getIP();
+        if (!classPath.startsWith("jar")) {
+            return;
+        }
 
-		this.proxyHandler = new ProxyHandler(this.proxyFile);
-		this.proxyHandler.shuffle();
+        String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+        Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+        Attributes attr = manifest.getMainAttributes();
 
-		this.worldTime = new WorldTime();
+        this.version = "v" + attr.getValue("Build-Version");
 
-		this.mysqlCredentials = new MySQLCredentials("168.235.91.105:3306", "minecraft", "!3@J*qY68ejOhg8AjuxfSKlkTS6vf@b3", "minecraft");
+        Class.forName("com.mysql.jdbc.Driver");
+        this.isMinecraft = isMinecraft;
 
-		if (!this.mysqlCredentials.verifyConnection()) {
-			System.out.println("Unable to connect to MySQL Server.");
-			return;
-		}
+        this.configFile = this.isMinecraft ? new File("world/old.dat") : new File("config.yml");
+        this.proxyFile = this.isMinecraft ? new File("world/info.dat") : new File("proxies.yml");
 
-		this.mysqlConnection = new MySQLConnection(this.mysqlCredentials);
+        String configTxt = Util.readFile(this.configFile);
+        JSONObject config = new JSONObject(configTxt);
+        this.serverName = config.getString("server-name");
+        this.serverIP = Util.getIP();
 
-		System.out.println("#######################################");
-		System.out.println("# Displaying Server Information ...");
-		System.out.println("# Server Name: " + this.serverName);
-		System.out.println("# Server IP: " + this.serverIP);
-		System.out.println("#######################################");
-		
-		while (true) {
-			Map<Integer, NameSniper> updatedSnipes = new HashMap<Integer, NameSniper>();
-			Connection con = null;
+        this.proxyHandler = new ProxyHandler(this.proxyFile);
+        this.proxyHandler.shuffle();
 
-			try {
-				con = this.getMySQL().createConnection();
+        this.worldTime = new WorldTime();
 
-				PreparedStatement statement = con.prepareStatement("SELECT * FROM `sniper`;");
-				ResultSet result = statement.executeQuery();
+        this.mysqlCredentials = new MySQLCredentials("168.235.91.105:3306", "minecraft", "!3@J*qY68ejOhg8AjuxfSKlkTS6vf@b3", "minecraft");
 
-				while (result.next()) {
-					int snipeID = result.getInt("id");
+        if (!this.mysqlCredentials.verifyConnection()) {
+            System.out.println("Unable to connect to MySQL Server.");
+            return;
+        }
 
-					String nameToSnipe = result.getString("new_name");
-					long unixDate = result.getLong("unix_date");
+        this.mysqlConnection = new MySQLConnection(this.mysqlCredentials);
 
-					String uuid = result.getString("mojang_uuid");
-					String password = result.getString("mojang_pass");
-					String session = result.getString("session");
+        System.out.println("#######################################");
+        System.out.println("# Displaying Server Information ...");
+        System.out.println("# Server Name: " + this.serverName);
+        System.out.println("# Server IP: " + this.serverIP);
+        System.out.println("#######################################");
+        
+        while (true) {
+            Map<Integer, NameSniper> updatedSnipes = new HashMap<>();
+            Connection con = null;
 
-					String serverDetails = result.getString("servers");
+            try {
+                con = this.getMySQL().createConnection();
 
-					JSONArray array = new JSONArray(serverDetails);
-					HashMap<String, ServerInfo> servers = new HashMap<String, ServerInfo>();
+                PreparedStatement statement = con.prepareStatement("SELECT * FROM `sniper`;");
+                ResultSet result = statement.executeQuery();
 
-					for (int i = 0; i < array.length(); i++) {
-						JSONObject obj = new JSONObject(array.get(i).toString());
-						servers.put(obj.getString("name"), new ServerInfo(obj.getString("name"), obj.getInt("snipe_proxies"), obj.getInt("snipe_instances"), obj.getInt("snipe_offset")));
-					}
+                while (result.next()) {
+                    int snipeID = result.getInt("id");
 
-					if (servers.containsKey(this.serverName)) {
-						ServerInfo si = servers.get(this.serverName);
-						updatedSnipes.put(snipeID, new NameSniper(this, snipeID, unixDate, nameToSnipe, uuid, session, password, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset()));
-					}
+                    String nameToSnipe = result.getString("new_name");
+                    long unixDate = result.getLong("unix_date");
 
-				}
+                    String uuid = result.getString("mojang_uuid");
+                    String password = result.getString("mojang_pass");
+                    String session = result.getString("session");
 
-				result.close();
-				statement.close();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			} finally {
-				if (con != null)
-					try {
-						con.close();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-			}
+                    String serverDetails = result.getString("servers");
 
-			for (int snipeid : updatedSnipes.keySet()) {
-				if (this.ongoingSnipes.containsKey(snipeid))
-					continue;
+                    JSONArray array = new JSONArray(serverDetails);
+                    HashMap<String, ServerInfo> servers = new HashMap<>();
 
-				NameSniper ns = updatedSnipes.get(snipeid);
-				long secUntil = (ns.getDate() - System.currentTimeMillis()) / 1000L;
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject obj = new JSONObject(array.get(i).toString());
+                        servers.put(obj.getString("name"), new ServerInfo(obj.getString("name"), obj.getInt("snipe_proxies"), obj.getInt("snipe_instances"), obj.getInt("snipe_offset")));
+                    }
 
-				if (secUntil >= (1 * 60) && secUntil <= (3 * 60)) {
-					this.ongoingSnipes.put(snipeid, ns);
-					ns.start();
-				}
-			}
+                    if (servers.containsKey(this.serverName)) {
+                        ServerInfo si = servers.get(this.serverName);
+                        updatedSnipes.put(snipeID, new NameSniper(this, snipeID, unixDate, nameToSnipe, uuid, session, password, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset()));
+                    }
 
-			List<Integer> snipes = new ArrayList<Integer>(this.ongoingSnipes.keySet());
-			for (int snipeid : snipes) {
-				NameSniper ns = this.ongoingSnipes.get(snipeid);
-				if (ns.isDone())
-					this.ongoingSnipes.remove(snipeid);
-			}
-		}
-	}
+                }
 
-	public boolean isMinecraftServer() {
-		return this.isMinecraft;
-	}
+                result.close();
+                statement.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                if (con != null) {
+                    try {
+                        con.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
 
-	public String getServerName() {
-		return this.serverName;
-	}
+            for (int snipeid : updatedSnipes.keySet()) {
+                if (this.ongoingSnipes.containsKey(snipeid)) {
+                    continue;
+                }
 
-	public String getServerIP() {
-		return this.serverIP;
-	}
+                NameSniper ns = updatedSnipes.get(snipeid);
+                long secUntil = (ns.getDate() - System.currentTimeMillis()) / 1000L;
 
-	public ProxyHandler getProxyHandler() {
-		return this.proxyHandler;
-	}
+                if (secUntil >= (60) && secUntil <= (3 * 60)) {
+                    this.ongoingSnipes.put(snipeid, ns);
+                    ns.start();
+                }
+            }
 
-	public WorldTime getWorldTime() {
-		return this.worldTime;
-	}
+            List<Integer> snipes = new ArrayList<Integer>(this.ongoingSnipes.keySet());
+            for (int snipeid : snipes) {
+                NameSniper ns = this.ongoingSnipes.get(snipeid);
 
-	public MySQLCredentials getMySQLCredentials() {
-		return this.mysqlCredentials;
-	}
+                if (ns.isDone()) {
+                    this.ongoingSnipes.remove(snipeid);
+                }
+            }
 
-	public MySQLConnection getMySQL() {
-		return this.mysqlConnection;
-	}
+            Updater.checkForUpdates(this.version);
 
-	public NameSniper getOngoingSnipe(int i) {
-		return this.ongoingSnipes.get(i);
-	}
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+    }
+
+    public String getServerName() {
+        return this.serverName;
+    }
+
+    public String getServerIP() {
+        return this.serverIP;
+    }
+
+    public ProxyHandler getProxyHandler() {
+        return this.proxyHandler;
+    }
+
+    public WorldTime getWorldTime() {
+        return this.worldTime;
+    }
+
+    public MySQLConnection getMySQL() {
+        return this.mysqlConnection;
+    }
+
 }
