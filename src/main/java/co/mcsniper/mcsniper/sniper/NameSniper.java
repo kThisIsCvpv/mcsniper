@@ -95,7 +95,7 @@ public class NameSniper implements Runnable {
         logBuilder.append("UNIX Timestamp: " + this.snipeDate + "\n\n");
         logBuilder.append("Proxy Count: " + this.proxyAmount + "\n");
         logBuilder.append("Proxy Instances: " + this.proxyInstances + "\n");
-        logBuilder.append("Proxy Offset: " + (new DecimalFormat("+###,###")).format(this.proxyOffset) + "ms\n\n");
+        logBuilder.append("Proxy Offset: " + (new DecimalFormat("+###,###;-####,###")).format(this.proxyOffset) + "ms\n\n");
 
         for (int server = 0; server < this.proxyAmount; server++) {
             logBuilder.append("Session #" + (server + 1) + ": " + proxySet[server].toString() + "\n");
