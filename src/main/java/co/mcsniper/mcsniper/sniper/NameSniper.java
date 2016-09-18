@@ -50,7 +50,7 @@ public class NameSniper implements Runnable {
     }
 
     @SuppressWarnings("deprecation")
-	public void run() {
+    public void run() {
         long clickTime = this.snipeDate + this.proxyOffset;
         long pushDelay = this.snipeDate + (30L * 1000L);
 
@@ -86,7 +86,7 @@ public class NameSniper implements Runnable {
 
         StringBuilder logBuilder = new StringBuilder();
         String parseDate = MCSniper.DATE_FORMAT.format(this.snipeDate);
-        
+
         logBuilder.append("Final Result: " + (this.successful ? "Successful" : "Failure") + "\n");
         logBuilder.append("Server Name: " + this.handler.getServerName() + "\n");
         logBuilder.append("Server Host: " + this.handler.getServerIP() + "\n\n");
@@ -127,13 +127,13 @@ public class NameSniper implements Runnable {
     }
 
     public String getName(){
-    	return this.name;
+        return this.name;
     }
-    
+
     public String getUUID(){
-    	return this.uuid;
+        return this.uuid;
     }
-    
+
     public long getDate() {
         return this.snipeDate;
     }

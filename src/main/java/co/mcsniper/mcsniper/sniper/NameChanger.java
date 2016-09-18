@@ -35,7 +35,7 @@ public class NameChanger implements Runnable {
         this.password = password;
         this.log = log;
 
-        String rawSession = new String(this.session);
+        String rawSession = this.session;
         if (rawSession.startsWith("\"") && rawSession.endsWith("\"") && rawSession.length() > 2) {
             rawSession = rawSession.substring(1, rawSession.length() - 1);
         }

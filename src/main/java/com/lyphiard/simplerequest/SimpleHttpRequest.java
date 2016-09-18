@@ -51,10 +51,10 @@ public class SimpleHttpRequest {
         this.cookies = cookies;
         return this;
     }
-    
+
     public SimpleHttpRequest setCookie(String key, String value) {
-    	this.cookies.put(key, value);
-    	return this;
+        this.cookies.put(key, value);
+        return this;
     }
 
     public SimpleHttpRequest setTimeout(int timeout) {

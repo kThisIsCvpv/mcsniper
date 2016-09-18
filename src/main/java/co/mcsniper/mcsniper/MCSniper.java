@@ -16,9 +16,6 @@ import java.util.TimeZone;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import co.mcsniper.mcsniper.sniper.util.Updater;
-
-import org.bukkit.Bukkit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,13 +24,14 @@ import co.mcsniper.mcsniper.sniper.mysql.MySQLConnection;
 import co.mcsniper.mcsniper.sniper.mysql.MySQLCredentials;
 import co.mcsniper.mcsniper.sniper.mysql.ServerInfo;
 import co.mcsniper.mcsniper.sniper.proxy.ProxyHandler;
+import co.mcsniper.mcsniper.sniper.util.Updater;
 import co.mcsniper.mcsniper.sniper.util.Util;
 import co.mcsniper.mcsniper.sniper.util.WorldTime;
 
 public class MCSniper {
 
     public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEEEEEEE d, y - hh:mm:ss a z");
-    
+
     static {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("EST5EDT"));
     }
@@ -58,7 +56,7 @@ public class MCSniper {
     public MCSniper(boolean isMinecraft) throws IOException, SQLException, ClassNotFoundException {
         String classPath = MCSniper.class.getResource(MCSniper.class.getSimpleName() + ".class").toString();
 
-        if (!classPath.startsWith("jar")) {
+        if (!classPath.endsWith("jar")) {
             return;
         }
 
@@ -98,7 +96,7 @@ public class MCSniper {
         System.out.println("Server IP: " + this.serverIP);
         System.out.println("Build Version: " + this.version);
         System.out.println("#######################################");
-        
+
         while (true) {
             Map<Integer, NameSniper> updatedSnipes = new HashMap<>();
             Connection con = null;
@@ -165,7 +163,7 @@ public class MCSniper {
                 }
             }
 
-            List<Integer> snipes = new ArrayList<Integer>(this.ongoingSnipes.keySet());
+            List<Integer> snipes = new ArrayList<>(this.ongoingSnipes.keySet());
             for (int snipeid : snipes) {
                 NameSniper ns = this.ongoingSnipes.get(snipeid);
 
@@ -175,15 +173,17 @@ public class MCSniper {
                 }
             }
 
-            if(Updater.checkForUpdates(this.version)) {
-            	if(this.isMinecraft)
-            		Bukkit.getServer().shutdown();
-            	break;
+            System.gc();
+
+            if (this.ongoingSnipes.isEmpty()) {
+                Updater.checkForUpdates(this.version);
             }
-            
+
             try {
-                Thread.sleep(10000);
-            } catch (InterruptedException ignored) { }
+                Thread.sleep(20000);
+            } catch (InterruptedException ignored) {
+
+            }
         }
     }
 
