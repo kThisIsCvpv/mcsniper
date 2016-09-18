@@ -64,6 +64,8 @@ public class NameChanger implements Runnable {
 
     public void run() {
         try {
+            long startTime = System.currentTimeMillis();
+
             String response = new SimpleHttpRequest(this.url)
                     .setProxy(this.proxy)
                     .addField("authenticityToken", this.authToken)
@@ -75,8 +77,10 @@ public class NameChanger implements Runnable {
                     .setCookie("PLAY_SESSION", this.session)
                     .execute()
                     .getResponse();
+
+            long overall = System.currentTimeMillis() - startTime;
             
-            this.log[this.server][this.instance] = response;
+            this.log[this.server][this.instance] = "[" + System.currentTimeMillis() + "] [" + overall + "ms] " + response;
 
             if (response.contains("Name changed")) {
                 this.main.setSuccessful();

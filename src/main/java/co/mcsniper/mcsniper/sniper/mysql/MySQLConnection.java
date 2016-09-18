@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 public class MySQLConnection {
 
-    private final int MAX_ATTEMPTS = 5;
     private MySQLCredentials credentials;
 
     public MySQLConnection(MySQLCredentials credentials) throws SQLException {
@@ -19,58 +18,54 @@ public class MySQLConnection {
     }
 
     public void pushLog(String serverName, int snipeID, String name, String time, int success, String log) {
-        for (int attempts = 0; attempts < this.MAX_ATTEMPTS; attempts++) {
-            Connection con = null;
+        Connection con = null;
 
-            try {
-                con = this.createConnection();
+        try {
+            con = this.createConnection();
 
-                PreparedStatement ps = con.prepareStatement("INSERT INTO `log` VALUES (?,?,?,?,?,?);");
-                ps.setString(1, serverName);
-                ps.setInt(2, snipeID);
-                ps.setString(3, name);
-                ps.setString(4, time);
-                ps.setInt(5, success);
-                ps.setString(6, log);
-                ps.execute();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO `log` VALUES (?, ?, ?, ?, ?, ?);");
+            ps.setString(1, serverName);
+            ps.setInt(2, snipeID);
+            ps.setString(3, name);
+            ps.setString(4, time);
+            ps.setInt(5, success);
+            ps.setString(6, log);
+            ps.execute();
 
-                ps.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            } finally {
-                if (con != null) {
-                    try {
-                        con.close();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
                 }
             }
         }
     }
     
     public void updateStatus(int snipeID, int statusCode) {
-        for (int attempts = 0; attempts < this.MAX_ATTEMPTS; attempts++) {
-            Connection con = null;
+        Connection con = null;
 
-            try {
-                con = this.createConnection();
+        try {
+            con = this.createConnection();
 
-                PreparedStatement ps = con.prepareStatement("UPDATE `sniper` SET `success` = ? WHERE `id` = ?;");
-                ps.setInt(1, snipeID);
-                ps.setInt(2, statusCode);
-                ps.executeUpdate();
+            PreparedStatement ps = con.prepareStatement("UPDATE `sniper` SET `success` = ? WHERE `id` = ?;");
+            ps.setInt(1, statusCode);
+            ps.setInt(2, snipeID);
+            ps.executeUpdate();
 
-                ps.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            } finally {
-                if (con != null) {
-                    try {
-                        con.close();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
                 }
             }
         }

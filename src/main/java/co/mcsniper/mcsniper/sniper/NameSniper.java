@@ -103,13 +103,13 @@ public class NameSniper implements Runnable {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
                 String response = this.responses[server][instance];
                 response = response == null ? "null" : response.replaceAll("\n", " ");
-                logBuilder.append("\tInstance " + (instance + 1) + ": " + response);
+                logBuilder.append("\tInstance " + (instance + 1) + ": " + response + "\n");
             }
 
             logBuilder.append("\n");
         }
 
-        this.handler.getMySQL().pushLog(this.handler.getServerName() + " / " + this.handler.getServerIP(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString());
+        this.handler.getMySQL().pushLog(this.handler.getServerName(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString());
         done = true;
     }
 
