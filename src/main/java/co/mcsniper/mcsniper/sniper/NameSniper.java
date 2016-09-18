@@ -1,6 +1,7 @@
 package co.mcsniper.mcsniper.sniper;
 
 import java.net.Proxy;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class NameSniper implements Runnable {
         logBuilder.append("UNIX Timestamp: " + this.snipeDate + "\n\n");
         logBuilder.append("Proxy Count: " + this.proxyAmount + "\n");
         logBuilder.append("Proxy Instances: " + this.proxyInstances + "\n");
-        logBuilder.append("Proxy Offset: " + (this.proxyOffset > 0 ? "+" : "-") + this.proxyOffset + "\n\n");
+        logBuilder.append("Proxy Offset: " + (new DecimalFormat("+###,###")).format(this.proxyOffset) + "ms\n\n");
 
         for (int server = 0; server < this.proxyAmount; server++) {
             logBuilder.append("Session #" + (server + 1) + ": " + proxySet[server].toString() + "\n");

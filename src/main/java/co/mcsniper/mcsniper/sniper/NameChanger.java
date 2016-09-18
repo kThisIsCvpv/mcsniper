@@ -79,10 +79,10 @@ public class NameChanger implements Runnable {
                     .execute()
                     .getResponse();
 
-            long overall = System.currentTimeMillis() - startTime;
+            long endTime = System.currentTimeMillis();
 
             DecimalFormat decimalFormat = new DecimalFormat("+###,###");
-            this.log[this.server][this.instance] = "[" + System.currentTimeMillis() + "] [" + overall + "ms] [" + decimalFormat.format(System.currentTimeMillis() - this.main.getDate()) + "ms] " + response;
+            this.log[this.server][this.instance] = "[" + endTime + "] [" + (endTime - startTime) + "ms] [" + decimalFormat.format(endTime - this.main.getDate()) + "ms] " + response;
 
             if (response.contains("Name changed")) {
                 this.main.setSuccessful();
