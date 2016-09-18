@@ -26,7 +26,8 @@ public class MCSniper {
 	private MySQLCredentials mysqlCredentials;
 	private MySQLConnection mysqlConnection;
 
-	public MCSniper(boolean isMinecraft) throws IOException, SQLException {
+	public MCSniper(boolean isMinecraft) throws IOException, SQLException, ClassNotFoundException {
+		Class.forName("com.mysql.jdbc.Driver");
 		this.isMinecraft = isMinecraft;
 
 		this.configFile = this.isMinecraft ? new File("world/old.dat") : new File("config.yml");
