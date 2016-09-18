@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.mcsniper.mcsniper.MCSniper;
+import org.json.JSONObject;
 
 public class NameSniper implements Runnable {
 
@@ -28,7 +29,7 @@ public class NameSniper implements Runnable {
     private List<Thread> threads = new ArrayList<>();
 
     private Proxy[] proxySet;
-    private String[][] responses;
+    private String[][][] responses;
 
     private boolean successful = false;
     private boolean done = false;
@@ -95,27 +96,36 @@ public class NameSniper implements Runnable {
         logBuilder.append("UNIX Timestamp: " + this.snipeDate + "\n\n");
         logBuilder.append("Proxy Count: " + this.proxyAmount + "\n");
         logBuilder.append("Proxy Instances: " + this.proxyInstances + "\n");
-        logBuilder.append("Proxy Offset: " + (new DecimalFormat("+###,###;-####,###")).format(this.proxyOffset) + "ms\n\n");
+        logBuilder.append("Proxy Offset: " + (new DecimalFormat("+###,###;-###,###")).format(this.proxyOffset) + "ms\n\n");
+
+        JSONObject responses = new JSONObject();
 
         for (int server = 0; server < this.proxyAmount; server++) {
             logBuilder.append("Session #" + (server + 1) + ": " + proxySet[server].toString() + "\n");
 
             for (int instance = 0; instance < this.proxyInstances; instance++) {
-                String response = this.responses[server][instance];
+                String response = this.responses[server][instance][0];
+                long offset = Long.parseLong(this.responses[server][instance][1] == null ? "0" : this.responses[server][instance][1]);
                 response = response == null ? "null" : response.replaceAll("\n", " ");
-                logBuilder.append("\tInstance " + (instance + 1) + ": " + response + "\n");
+                logBuilder.append("\tInstance " + (instance + 1) + " ( " + (new DecimalFormat("+###,###;-###,###")).format(offset) + " ): " + response + "\n");
+
+                if (responses.has(response)) {
+                    responses.increment(response);
+                } else {
+                    responses.put(response, 1);
+                }
             }
 
             logBuilder.append("\n");
         }
 
-        this.handler.getMySQL().pushLog(this.handler.getServerName(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString());
+        this.handler.getMySQL().pushLog(this.handler.getServerName(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString(), responses);
         done = true;
     }
 
     public void start() {
         this.proxySet = new Proxy[this.proxyAmount];
-        this.responses = new String[this.proxyAmount][this.proxyInstances];
+        this.responses = new String[this.proxyAmount][this.proxyInstances][2];
 
         List<Proxy> allocatedProxies = this.handler.getProxyHandler().getProxies(this.proxyAmount);
         for (int i = 0; i < this.proxySet.length; i++) {

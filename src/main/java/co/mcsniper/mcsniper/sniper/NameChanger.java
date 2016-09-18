@@ -23,9 +23,9 @@ public class NameChanger implements Runnable {
     private String password;
     private String authToken;
 
-    private String[][] log;
+    private String[][][] log;
 
-    public NameChanger(NameSniper main, int server, int instance, String url, Proxy proxy, String name, String session, String password, String[][] log) {
+    public NameChanger(NameSniper main, int server, int instance, String url, Proxy proxy, String name, String session, String password, String[][][] log) {
         this.main = main;
         this.server = server;
         this.instance = instance;
@@ -65,8 +65,6 @@ public class NameChanger implements Runnable {
 
     public void run() {
         try {
-            long startTime = System.currentTimeMillis();
-
             String response = new SimpleHttpRequest(this.url)
                     .setProxy(this.proxy)
                     .addField("authenticityToken", this.authToken)
@@ -81,14 +79,15 @@ public class NameChanger implements Runnable {
 
             long endTime = System.currentTimeMillis();
 
-            DecimalFormat decimalFormat = new DecimalFormat("+###,###;-####,###");
-            this.log[this.server][this.instance] = "[ " + (endTime - startTime) + "ms ] [ " + decimalFormat.format(endTime - this.main.getDate()) + "ms ] " + response;
+            this.log[this.server][this.instance][0] = response;
+            this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
 
             if (response.contains("Name changed")) {
                 this.main.setSuccessful();
             }
         } catch (Exception ex) {
-            this.log[this.server][this.instance] = ex.getClass().getSimpleName();
+            this.log[this.server][this.instance][0] = ex.getClass().getSimpleName();
+            this.log[this.server][this.instance][1] = "0";
         }
     }
 
