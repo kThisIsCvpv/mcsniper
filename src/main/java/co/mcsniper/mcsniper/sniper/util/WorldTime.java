@@ -45,7 +45,7 @@ public class WorldTime {
                         Thread.sleep(2500L);
                     }
 
-                    URL url = new URL("https://mcsniper.co/internal/time");
+                    URL url = new URL("https://www.kthisiscvpv.com/time.php");
 
                     URLConnection connection = url.openConnection();
                     long requestTime = System.currentTimeMillis();
@@ -64,7 +64,9 @@ public class WorldTime {
 
                     br.close();
                     failed = false;
-                } catch (Exception ignored) { }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
