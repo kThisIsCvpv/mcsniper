@@ -1,5 +1,7 @@
 package co.mcsniper;
 
+import java.io.IOException;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 import co.mcsniper.mcsniper.MCSniper;
@@ -16,7 +18,11 @@ public class MainServer extends JavaPlugin {
 	public void onEnable() {
 		this.instance = new Thread(new Runnable() {
 			public void run() {
-				new MCSniper(true);
+				try {
+					new MCSniper(true);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 

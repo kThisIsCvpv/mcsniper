@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.util;
+package co.mcsniper.mcsniper.sniper.util;
 
 import com.lyphiard.simplerequest.SimpleHttpRequest;
 import com.lyphiard.simplerequest.SimpleHttpResponse;
@@ -19,7 +19,10 @@ public class Updater {
 	 */
 	public void checkForUpdates(String currentVersion) {
 		try {
-			SimpleHttpResponse response = new SimpleHttpRequest("https://api.github.com/repos/Lyphiard/MCSniper/releases").addHeader("Authorization", "token 2ec64c7c3f5da0fd5e8efda5f4b4035bef206dd7").addHeader("Accept", "application/json").execute();
+			SimpleHttpResponse response = new SimpleHttpRequest("https://api.github.com/repos/Lyphiard/MCSniper/releases")
+					.addHeader("Authorization", "token 2ec64c7c3f5da0fd5e8efda5f4b4035bef206dd7")
+					.addHeader("Accept", "application/json")
+					.execute();
 
 			JSONArray releases = new JSONArray(response.getResponse());
 
