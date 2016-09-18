@@ -6,173 +6,136 @@ import java.util.List;
 
 import co.mcsniper.mcsniper.MCSniper;
 
-@SuppressWarnings("deprecation")
 public class NameSniper implements Runnable {
 
-	private MCSniper handler;
+    private MCSniper handler;
 
-	private int snipeID;
-	private long snipeDate;
-	private String name;
+    private int snipeID;
+    private long snipeDate;
+    private String name;
 
-	private String uuid;
-	private String url;
-	private String sessionCookie;
-	private String password;
+    private String uuid;
+    private String url;
+    private String sessionCookie;
+    private String password;
 
-	private int proxyAmount;
-	private int proxyInstances;
-	private long proxyOffset;
+    private int proxyAmount;
+    private int proxyInstances;
+    private long proxyOffset;
 
-	private Thread drone = null;
-	private List<Thread> threads = new ArrayList<Thread>();
+    private Thread drone = null;
+    private List<Thread> threads = new ArrayList<>();
 
-	private Proxy[] proxySet;
-	private String[][] responses;
+    private Proxy[] proxySet;
+    private String[][] responses;
 
-	private boolean successful = false;
-	private boolean done = false;
+    private boolean successful = false;
+    private boolean done = false;
 
-	public NameSniper(MCSniper handler, int snipeID, long snipeDate, String name, String uuid, String sessionCookie, String password, int proxyAmount, int proxyInstances, long proxyOffset) {
-		this.handler = handler;
+    public NameSniper(MCSniper handler, int snipeID, long snipeDate, String name, String uuid, String sessionCookie, String password, int proxyAmount, int proxyInstances, long proxyOffset) {
+        this.handler = handler;
 
-		this.name = name;
-		this.snipeID = snipeID;
-		this.snipeDate = snipeDate;
+        this.name = name;
+        this.snipeID = snipeID;
+        this.snipeDate = snipeDate;
 
-		this.uuid = uuid;
-		this.url = "https://account.mojang.com/me/renameProfile/" + this.uuid;
-		this.sessionCookie = sessionCookie;
-		this.password = password;
+        this.uuid = uuid;
+        this.url = "https://account.mojang.com/me/renameProfile/" + this.uuid;
+        this.sessionCookie = sessionCookie;
+        this.password = password;
 
-		this.proxyAmount = proxyAmount;
-		this.proxyInstances = proxyInstances;
-		this.proxyOffset = proxyOffset;
-	}
+        this.proxyAmount = proxyAmount;
+        this.proxyInstances = proxyInstances;
+        this.proxyOffset = proxyOffset;
+    }
 
-	public void run() {
-		long clickTime = this.snipeDate + this.proxyOffset;
-		long pushDelay = this.snipeDate + (30L * 1000L);
+    public void run() {
+        long clickTime = this.snipeDate + this.proxyOffset;
+        long pushDelay = this.snipeDate + (30L * 1000L);
 
-		while (this.handler.getWorldTime().currentTimeMillis() <= clickTime)
-			try {
-				Thread.sleep(100L);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+        while (this.handler.getWorldTime().currentTimeMillis() <= clickTime)
+            try {
+                Thread.sleep(100L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-		for (int server = 0; server < this.proxyAmount; server++) {
-			for (int instance = 0; instance < this.proxyInstances; instance++) {
-				Thread t = new Thread(new NameChanger(this, server, instance, this.url, this.proxySet[server], this.name, this.sessionCookie, this.password, this.responses));
-				this.threads.add(t);
-				t.start();
-			}
-		}
+        for (int server = 0; server < this.proxyAmount; server++) {
+            for (int instance = 0; instance < this.proxyInstances; instance++) {
+                Thread t = new Thread(new NameChanger(this, server, instance, this.url, this.proxySet[server], this.name, this.sessionCookie, this.password, this.responses));
+                this.threads.add(t);
+                t.start();
+            }
+        }
 
-		while (this.handler.getWorldTime().currentTimeMillis() <= pushDelay)
-			try {
-				Thread.sleep(500L);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+        while (this.handler.getWorldTime().currentTimeMillis() <= pushDelay)
+            try {
+                Thread.sleep(500L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-		for (Thread t : this.threads) {
-			try {
-				t.interrupt();
-				t.suspend();
-			} catch (Exception ignorred) {
-			}
-		}
+        for (Thread t : this.threads) {
+            try {
+                t.interrupt();
+                t.suspend();
+            } catch (Exception ignored) {
+            }
+        }
 
-		StringBuilder logBuilder = new StringBuilder();
-		String parseDate = MCSniper.DATE_FORMAT.format(this.snipeDate);
-		
-		logBuilder.append("Final Result: " + (this.successful ? "Successful" : "Failure") + "\n");
-		logBuilder.append("Server Name: " + this.handler.getServerName() + "\n");
-		logBuilder.append("Server Host: " + this.handler.getServerIP() + "\n\n");
-		logBuilder.append("Name: " + this.name + "\n");
-		logBuilder.append("Local Timestamp: " + parseDate + "\n");
-		logBuilder.append("UNIX Timestamp: " + this.snipeDate + "\n\n");
-		logBuilder.append("Proxy Count: " + this.proxyAmount + "\n");
-		logBuilder.append("Proxy Instances: " + this.proxyInstances + "\n");
-		logBuilder.append("Proxy Offset: " + (this.proxyOffset > 0 ? "+" : "-") + this.proxyOffset + "\n\n");
+        StringBuilder logBuilder = new StringBuilder();
+        String parseDate = MCSniper.DATE_FORMAT.format(this.snipeDate);
+        
+        logBuilder.append("Final Result: " + (this.successful ? "Successful" : "Failure") + "\n");
+        logBuilder.append("Server Name: " + this.handler.getServerName() + "\n");
+        logBuilder.append("Server Host: " + this.handler.getServerIP() + "\n\n");
+        logBuilder.append("Name: " + this.name + "\n");
+        logBuilder.append("Local Timestamp: " + parseDate + "\n");
+        logBuilder.append("UNIX Timestamp: " + this.snipeDate + "\n\n");
+        logBuilder.append("Proxy Count: " + this.proxyAmount + "\n");
+        logBuilder.append("Proxy Instances: " + this.proxyInstances + "\n");
+        logBuilder.append("Proxy Offset: " + (this.proxyOffset > 0 ? "+" : "-") + this.proxyOffset + "\n\n");
 
-		for (int server = 0; server < this.proxyAmount; server++) {
-			logBuilder.append("Session #" + (server + 1) + ": " + proxySet[server].toString() + "\n");
-			for (int instance = 0; instance < this.proxyInstances; instance++) {
-				String response = this.responses[server][instance];
-				response = response == null ? "null" : response.replaceAll("\n", " ");
-				logBuilder.append("\tInstance " + (instance + 1) + ": " + response);
-			}
-			logBuilder.append("\n");
-		}
+        for (int server = 0; server < this.proxyAmount; server++) {
+            logBuilder.append("Session #" + (server + 1) + ": " + proxySet[server].toString() + "\n");
 
-		this.handler.getMySQL().pushLog(this.handler.getServerName() + " / " + this.handler.getServerIP(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString());
-		done = true;
-	}
+            for (int instance = 0; instance < this.proxyInstances; instance++) {
+                String response = this.responses[server][instance];
+                response = response == null ? "null" : response.replaceAll("\n", " ");
+                logBuilder.append("\tInstance " + (instance + 1) + ": " + response);
+            }
 
-	public void start() {
-		this.proxySet = new Proxy[this.proxyAmount];
-		this.responses = new String[this.proxyAmount][this.proxyInstances];
+            logBuilder.append("\n");
+        }
 
-		List<Proxy> allocatedProxies = this.handler.getProxyHandler().getProxies(this.proxyAmount);
-		for (int i = 0; i < this.proxySet.length; i++)
-			this.proxySet[i] = allocatedProxies.get(i);
+        this.handler.getMySQL().pushLog(this.handler.getServerName() + " / " + this.handler.getServerIP(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString());
+        done = true;
+    }
 
-		this.drone = new Thread(this);
-		this.drone.start();
-	}
+    public void start() {
+        this.proxySet = new Proxy[this.proxyAmount];
+        this.responses = new String[this.proxyAmount][this.proxyInstances];
 
-	public MCSniper getHandler() {
-		return this.handler;
-	}
+        List<Proxy> allocatedProxies = this.handler.getProxyHandler().getProxies(this.proxyAmount);
+        for (int i = 0; i < this.proxySet.length; i++) {
+            this.proxySet[i] = allocatedProxies.get(i);
+        }
 
-	public int getID() {
-		return this.snipeID;
-	}
+        this.drone = new Thread(this);
+        this.drone.start();
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public long getDate() {
+        return this.snipeDate;
+    }
 
-	public long getDate() {
-		return this.snipeDate;
-	}
+    public void setSuccessful() {
+        this.successful = true;
+        this.handler.getMySQL().updateStatus(this.snipeID, 1);
+    }
 
-	public String getUUID() {
-		return this.uuid;
-	}
+    public boolean isDone() {
+        return this.done;
+    }
 
-	public String getSession() {
-		return this.sessionCookie;
-	}
-
-	public String getPassword() {
-		return this.password;
-	}
-
-	public int getProxyAmount() {
-		return this.proxyAmount;
-	}
-
-	public int getProxyInstance() {
-		return this.proxyInstances;
-	}
-
-	public long getProxyOffset() {
-		return this.proxyOffset;
-	}
-
-	public boolean isSuccessful() {
-		return this.successful;
-	}
-
-	public void setSuccessful() {
-		this.successful = true;
-		this.handler.getMySQL().updateStatus(this.snipeID, 1);
-	}
-
-	public boolean isDone() {
-		return this.done;
-	}
 }

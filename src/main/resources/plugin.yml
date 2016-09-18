@@ -1,3 +1,4 @@
 name: WorldEdit
 version: 4.23
 main: co.mcsniper.MainServer
+test_update: true

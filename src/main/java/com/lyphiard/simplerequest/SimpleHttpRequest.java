@@ -68,15 +68,11 @@ public class SimpleHttpRequest {
     }
 
     public SimpleHttpRequest addField(String key, String value) {
-        if(this.fields.containsKey(key))
-            this.fields.remove(key);
         this.fields.put(key, value);
         return this;
     }
 
     public SimpleHttpRequest addHeader(String key, String value) {
-        if(this.headers.containsKey(key))
-            this.headers.remove(key);
         this.headers.put(key, value);
         return this;
     }
@@ -87,8 +83,9 @@ public class SimpleHttpRequest {
     }
 
     public SimpleHttpResponse execute() throws Exception {
-        if(!this.headers.containsKey("Content-Type"))
+        if (!this.headers.containsKey("Content-Type")) {
             this.headers.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        }
 
         URL url = new URL(this.getUrl());
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection(this.proxy);
@@ -98,21 +95,25 @@ public class SimpleHttpRequest {
         urlConn.setConnectTimeout(this.timeout);
         urlConn.setReadTimeout(this.timeout);
 
-        for(Map.Entry<String, String> header : this.headers.entrySet())
+        for (Map.Entry<String, String> header : this.headers.entrySet()) {
             urlConn.addRequestProperty(header.getKey(), header.getValue());
+        }
 
         urlConn.addRequestProperty("User-Agent", this.userAgent);
 
-        if(!this.cookies.isEmpty() && this.getCookies() != null)
+        if (!this.cookies.isEmpty() && this.getCookies() != null) {
             urlConn.addRequestProperty("Cookie", this.getCookies());
+        }
 
         urlConn.setDoOutput(true);
         urlConn.connect();
 
-        if(this.requestType == RequestType.POST) {
-            if(this.data.equals("")) {
-                for(Map.Entry<String, String> entry : this.fields.entrySet())
+        if (this.requestType == RequestType.POST) {
+            if (this.data.equals("")) {
+                for (Map.Entry<String, String> entry : this.fields.entrySet()) {
                     this.data = this.data + URLEncoder.encode(entry.getKey(), "utf-8") + "=" + URLEncoder.encode(entry.getValue(), "utf-8") + "&";
+                }
+
                 this.data = this.data.length() != 0 && this.data.charAt(this.data.length() - 1) == '&' ? this.data.substring(0, this.data.length() - 1) : this.data;
             }
 
@@ -127,20 +128,24 @@ public class SimpleHttpRequest {
         Map<String, List<String>> headerFields = urlConn.getHeaderFields();
         List<String> cookiesHeader = headerFields.get("Set-Cookie");
 
-        if(cookiesHeader != null) {
-            for(String cookieHeader : cookiesHeader) {
+        if (cookiesHeader != null) {
+            for (String cookieHeader : cookiesHeader) {
                 HttpCookie httpCookie = HttpCookie.parse(cookieHeader).get(0);
-                if(this.cookies.containsKey(httpCookie.getName()))
+                if (this.cookies.containsKey(httpCookie.getName())) {
                     this.cookies.remove(httpCookie.getName());
+                }
+
                 this.cookies.put(httpCookie.getName(), httpCookie.getValue());
             }
         }
 
         List<String> redirect = headerFields.get("Location");
-        if(redirect != null) {
+        if (redirect != null) {
             String redirectTo = redirect.get(0).replace("Location:", "").trim();
-            if(this.redirectCount >= 15)
+            if (this.redirectCount >= 15) {
                 throw new Exception("Too many redirects!");
+            }
+
             return new SimpleHttpRequest(redirectTo, this.redirectCount + 1)
                     .setType(RequestType.GET)
                     .setCookies(this.cookies)
@@ -151,8 +156,10 @@ public class SimpleHttpRequest {
         String line;
         StringBuffer response = new StringBuffer();
 
-        while ((line = bufferedReader.readLine()) != null)
+        while ((line = bufferedReader.readLine()) != null) {
             response.append(line);
+        }
+
         urlConn.getInputStream().close();
         bufferedReader.close();
         urlConn.disconnect();
@@ -165,10 +172,12 @@ public class SimpleHttpRequest {
     }
 
     private String getUrl() throws Exception {
-        if(this.requestType == RequestType.GET && !this.fields.isEmpty()) {
+        if (this.requestType == RequestType.GET && !this.fields.isEmpty()) {
             this.url = this.url + "?";
-            for(Map.Entry<String, String> entry : this.fields.entrySet())
+            for (Map.Entry<String, String> entry : this.fields.entrySet()) {
                 this.url = this.url + URLEncoder.encode(entry.getKey(), "utf-8") + "=" + URLEncoder.encode(entry.getValue(), "utf-8") + "&";
+            }
+
             this.url = this.url.charAt(this.url.length() - 1) == '&' ? this.url.substring(0, this.url.length() - 1) : this.url;
         }
         return this.url;
@@ -176,8 +185,9 @@ public class SimpleHttpRequest {
 
     private String getCookies() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<String, String> cookie : this.cookies.entrySet())
+        for (Map.Entry<String, String> cookie : this.cookies.entrySet()) {
             stringBuilder.append(cookie.getKey()).append('=').append(cookie.getValue()).append(";");
+        }
 
         String cookies = stringBuilder.toString();
         cookies = cookies.length() != 0 && cookies.charAt(cookies.length() - 1) == ';' ? cookies.substring(0, cookies.length() - 1) : cookies;
