@@ -1,7 +1,6 @@
 package co.mcsniper.mcsniper.sniper;
 
 import java.net.Proxy;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +76,7 @@ public class NameChanger implements Runnable {
                     .execute()
                     .getResponse();
 
-            long endTime = System.currentTimeMillis();
+            long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
             this.log[this.server][this.instance][0] = response;
             this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";

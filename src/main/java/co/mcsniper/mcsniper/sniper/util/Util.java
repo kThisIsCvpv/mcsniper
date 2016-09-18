@@ -31,4 +31,12 @@ public class Util {
         return sb.toString();
     }
 
+    public static boolean isInteger(String x) {
+        try {
+            Integer.parseInt(x);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
 }

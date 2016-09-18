@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import co.mcsniper.mcsniper.MCSniper;
 
+@SuppressWarnings("deprecation")
 public class MainServer extends JavaPlugin {
 
     private Thread instance;

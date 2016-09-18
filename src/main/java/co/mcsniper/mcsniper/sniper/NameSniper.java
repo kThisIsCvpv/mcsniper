@@ -3,11 +3,17 @@ package co.mcsniper.mcsniper.sniper;
 import java.net.Proxy;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import co.mcsniper.mcsniper.MCSniper;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONObject;
 
+import co.mcsniper.mcsniper.MCSniper;
+import co.mcsniper.mcsniper.sniper.util.Util;
+
+@SuppressWarnings("deprecation")
 public class NameSniper implements Runnable {
 
     private MCSniper handler;
@@ -99,15 +105,19 @@ public class NameSniper implements Runnable {
         logBuilder.append("Proxy Offset: " + (new DecimalFormat("+###,###;-###,###")).format(this.proxyOffset) + "ms\n\n");
 
         JSONObject responses = new JSONObject();
+        List<String> validResponses = new ArrayList<String>();
 
         for (int server = 0; server < this.proxyAmount; server++) {
             logBuilder.append("Session #" + (server + 1) + ": " + proxySet[server].toString() + "\n");
 
             for (int instance = 0; instance < this.proxyInstances; instance++) {
                 String response = this.responses[server][instance][0];
-                long offset = Long.parseLong(this.responses[server][instance][1] == null ? "0" : this.responses[server][instance][1]);
-                response = response == null ? "null" : response.replaceAll("\n", " ");
-                logBuilder.append("\tInstance " + (instance + 1) + " ( " + (new DecimalFormat("+###,###;-###,###")).format(offset) + " ): " + response + "\n");
+                long responseTime = Long.parseLong(this.responses[server][instance][1] == null ? "0" : this.responses[server][instance][1]);
+                response = response == null ? "null" : StringEscapeUtils.unescapeJava(response.replaceAll("\n", " "));
+                logBuilder.append("\tInstance " + (instance + 1) + " ( " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ): " + response + "\n");
+
+                if (!response.equals("null"))
+                    validResponses.add(responseTime + " " + response);
 
                 if (responses.has(response)) {
                     responses.increment(response);
@@ -117,6 +127,31 @@ public class NameSniper implements Runnable {
             }
 
             logBuilder.append("\n");
+        }
+
+        Collections.sort(validResponses, new Comparator<String>() {
+            public int compare(String o1, String o2) {
+                try {
+                    return Integer.compare(Integer.parseInt(o1.split(" ")[0]), Integer.parseInt(o2.split(" ")[0]));
+                } catch (NumberFormatException ex) {
+                    return o1.compareTo(o2);
+                }
+            }
+        });
+
+        logBuilder.append("#####################################\n\n");
+        for (int x = 0; x < validResponses.size(); x++) {
+            String orderedResponse = validResponses.get(x);
+            String[] args = orderedResponse.split(" ");
+            int responseTime = Util.isInteger(args[0]) ? Integer.parseInt(args[0]) : 0;
+
+            String response = new String();
+            for (int i = 1; i < args.length; i++)
+                response += (i == 1 ? "" : " ") + args[i];
+
+            logBuilder.append("[ " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ] " + response);
+            if (x != (validResponses.size() - 1))
+                logBuilder.append("\n");
         }
 
         JSONObject config = new JSONObject();
@@ -141,11 +176,15 @@ public class NameSniper implements Runnable {
         this.drone.start();
     }
 
-    public String getName(){
+    public MCSniper getHandler() {
+        return this.handler;
+    }
+
+    public String getName() {
         return this.name;
     }
 
-    public String getUUID(){
+    public String getUUID() {
         return this.uuid;
     }
 
