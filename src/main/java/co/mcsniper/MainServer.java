@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import co.mcsniper.mcsniper.MCSniper;
 
+@SuppressWarnings("deprecation")
 public class MainServer extends JavaPlugin {
 
     private Thread instance;
@@ -22,7 +23,7 @@ public class MainServer extends JavaPlugin {
         this.instance.start();
     }
 
-    public void onDisable() {
+	public void onDisable() {
         try {
             this.instance.interrupt();
             this.instance.suspend();

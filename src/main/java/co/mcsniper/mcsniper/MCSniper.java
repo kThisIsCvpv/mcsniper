@@ -17,6 +17,8 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import co.mcsniper.mcsniper.sniper.util.Updater;
+
+import org.bukkit.Bukkit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -171,13 +173,15 @@ public class MCSniper {
                 }
             }
 
-            Updater.checkForUpdates(this.version);
-
+            if(Updater.checkForUpdates(this.version)) {
+            	if(this.isMinecraft)
+            		Bukkit.getServer().shutdown();
+            	break;
+            }
+            
             try {
                 Thread.sleep(10000);
-            } catch (InterruptedException ignored) {
-
-            }
+            } catch (InterruptedException ignored) { }
         }
     }
 

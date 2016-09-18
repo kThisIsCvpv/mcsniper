@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.json.JSONObject;
-
 import com.lyphiard.simplerequest.SimpleHttpRequest;
 
 public class Util {

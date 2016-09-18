@@ -49,7 +49,8 @@ public class NameSniper implements Runnable {
         this.proxyOffset = proxyOffset;
     }
 
-    public void run() {
+    @SuppressWarnings("deprecation")
+	public void run() {
         long clickTime = this.snipeDate + this.proxyOffset;
         long pushDelay = this.snipeDate + (30L * 1000L);
 

@@ -13,7 +13,7 @@ import java.net.URL;
 
 public class Updater {
 
-    public static void checkForUpdates(String currentVersion) {
+    public static boolean checkForUpdates(String currentVersion) {
         try {
             SimpleHttpResponse response = new SimpleHttpRequest("https://api.github.com/repos/Lyphiard/MCSniper/releases")
                     .addHeader("Authorization", "token 2ec64c7c3f5da0fd5e8efda5f4b4035bef206dd7")
@@ -23,19 +23,21 @@ public class Updater {
             JSONArray releases = new JSONArray(response.getResponse());
 
             if (releases.length() < 1) {
-                return;
+                return false;
             }
 
             JSONObject release = releases.getJSONObject(0);
             if (!release.getString("tag_name").equals(currentVersion)) {
-                update(release, currentVersion);
+                return update(release, currentVersion);
             }
         } catch (Exception e) {
             System.out.println("Could not check for updates: " + e.getMessage());
         }
+        
+        return false;
     }
 
-    private static void update(JSONObject release, String currentVersion) {
+    private static boolean update(JSONObject release, String currentVersion) {
         System.out.println("Detected new version: " + release.getString("tag_name") + " (Current Version: " + currentVersion + ")");
 
         int assetId = 0;
@@ -52,7 +54,7 @@ public class Updater {
 
         if (assetId == 0) {
             System.out.println("Could not find asset MCSniper.jar");
-            return;
+            return false;
         }
 
         try {
@@ -84,8 +86,8 @@ public class Updater {
                 outputStream.close();
                 inputStream.close();
 
-                System.out.println("File download complete. Restarting...");
-                System.exit(0);
+                System.out.println("File download complete.");
+                return true;
             } else {
                 System.out.println("No file to download. Server replied HTTP code: " + responseCode);
             }
@@ -94,6 +96,8 @@ public class Updater {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        return false;
     }
 
 }
