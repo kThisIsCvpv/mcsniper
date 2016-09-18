@@ -92,9 +92,9 @@ public class MCSniper {
         this.mysqlConnection = new MySQLConnection(this.mysqlCredentials);
 
         System.out.println("#######################################");
-        System.out.println("# Displaying Server Information ...");
-        System.out.println("# Server Name: " + this.serverName);
-        System.out.println("# Server IP: " + this.serverIP);
+        System.out.println("Server Name: " + this.serverName);
+        System.out.println("Server IP: " + this.serverIP);
+        System.out.println("Build Version: " + this.version);
         System.out.println("#######################################");
         
         while (true) {
