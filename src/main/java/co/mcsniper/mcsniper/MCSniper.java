@@ -91,11 +91,14 @@ public class MCSniper {
         }
 
         this.mysqlConnection = new MySQLConnection(this.mysqlCredentials);
+        
+        long serverOffset = this.worldTime.currentTimeMillis() - System.currentTimeMillis();
 
         System.out.println("#######################################");
         System.out.println("Server Name: " + this.serverName);
         System.out.println("Server IP: " + this.serverIP);
         System.out.println("Build Version: " + this.version);
+        System.out.println("Server Offset: " + (serverOffset >= 0 ? "+" : "") + serverOffset + " ms");
         System.out.println("#######################################");
 
         while (true) {
