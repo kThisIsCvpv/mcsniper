@@ -114,10 +114,16 @@ public class NameSniper implements Runnable {
                 String response = this.responses[server][instance][0];
                 long responseTime = Long.parseLong(this.responses[server][instance][1] == null ? "0" : this.responses[server][instance][1]);
                 response = response == null ? "null" : StringEscapeUtils.unescapeJava(response.replaceAll("\n", " "));
+
+                if (response.contains("<!DOCTYPE html>") || response.contains("<html")) {
+                    response = "HTML Response";
+                }
+
                 logBuilder.append("\tInstance " + (instance + 1) + " ( " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ): " + response + "\n");
 
-                if (!response.equals("null"))
+                if (!response.equals("null")) {
                     validResponses.add(responseTime + " " + response);
+                }
 
                 String parsedResponse = response.contains("Exception: ") ? response.substring(0, response.indexOf("Exception: ") + 9) : response;
                 if (responses.has(parsedResponse)) {
@@ -146,13 +152,15 @@ public class NameSniper implements Runnable {
             String[] args = orderedResponse.split(" ");
             int responseTime = Util.isInteger(args[0]) ? Integer.parseInt(args[0]) : 0;
 
-            String response = new String();
-            for (int i = 1; i < args.length; i++)
+            String response = "";
+            for (int i = 1; i < args.length; i++) {
                 response += (i == 1 ? "" : " ") + args[i];
+            }
 
             logBuilder.append("[ " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ] " + response);
-            if (x != (validResponses.size() - 1))
+            if (x != (validResponses.size() - 1)) {
                 logBuilder.append("\n");
+            }
         }
 
         JSONObject config = new JSONObject();
