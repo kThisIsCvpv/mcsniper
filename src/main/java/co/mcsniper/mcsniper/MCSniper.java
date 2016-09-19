@@ -155,7 +155,7 @@ public class MCSniper {
                 }
 
                 NameSniper ns = updatedSnipes.get(snipeid);
-                long secUntil = (ns.getDate() - System.currentTimeMillis()) / 1000L;
+                long secUntil = (ns.getDate() - this.worldTime.currentTimeMillis()) / 1000L;
 
                 if (secUntil >= (60) && secUntil <= (3 * 60)) {
                     System.out.println("UUID of player " + ns.getName() + " is " + ns.getUUID());
