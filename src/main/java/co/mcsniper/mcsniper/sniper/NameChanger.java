@@ -99,6 +99,7 @@ public class NameChanger implements Runnable {
             client.getOptions().setCssEnabled(false);
             client.getOptions().setThrowExceptionOnFailingStatusCode(false);
             client.getOptions().setThrowExceptionOnScriptError(false);
+            client.getOptions().setTimeout(30000);
             
             String response = client.getPage(request).getWebResponse().getContentAsString();
                         
