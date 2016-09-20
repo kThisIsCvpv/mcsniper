@@ -117,6 +117,12 @@ public class NameSniper implements Runnable {
 
                 if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
                     response = "HTML Response";
+                } else if (response.toLowerCase().contains("501 not implemented")) {
+                    response = "HTTP 501";
+                } else if (response.toLowerCase().contains("404 not found")) {
+                    response = "HTTP 404";
+                } else if (response.contains("<") && response.contains(">")) {
+                    response = "HTML Response";
                 }
 
                 logBuilder.append("\tInstance " + (instance + 1) + " ( " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ): " + response + "\n");
