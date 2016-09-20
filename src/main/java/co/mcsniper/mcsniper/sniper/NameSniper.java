@@ -115,7 +115,7 @@ public class NameSniper implements Runnable {
                 long responseTime = Long.parseLong(this.responses[server][instance][1] == null ? "0" : this.responses[server][instance][1]);
                 response = response == null ? "null" : StringEscapeUtils.unescapeJava(response.replaceAll("\n", " "));
 
-                if (response.contains("<!DOCTYPE html>") || response.contains("<html")) {
+                if (response.contains("<!DOCTYPE") || response.contains("<html")) {
                     response = "HTML Response";
                 }
 
