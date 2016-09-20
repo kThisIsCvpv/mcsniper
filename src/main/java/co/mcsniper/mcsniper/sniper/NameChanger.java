@@ -1,11 +1,16 @@
 package co.mcsniper.mcsniper.sniper;
 
 import java.net.Proxy;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.lyphiard.simplerequest.RequestType;
-import com.lyphiard.simplerequest.SimpleHttpRequest;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 public class NameChanger implements Runnable {
 
@@ -63,18 +68,51 @@ public class NameChanger implements Runnable {
     }
 
     public void run() {
+        WebClient client = null;
+        
         try {
-            String response = new SimpleHttpRequest(this.url)
-                    .setProxy(this.proxy)
-                    .addField("authenticityToken", this.authToken)
-                    .addField("newName", this.name)
-                    .addField("password", this.password)
-                    .setType(RequestType.POST)
-                    .setTimeout(30000)
-                    .addHeader("Accept-Language", "en-US,en;q=0.8")
-                    .setCookie("PLAY_SESSION", this.session)
-                    .execute()
-                    .getResponse();
+            WebRequest request = new WebRequest(new URL(this.url), HttpMethod.POST);
+            
+            request.setAdditionalHeader("Accept", "*/*");
+            request.setAdditionalHeader("Accept-Encoding", "gzip, deflate, br");
+            request.setAdditionalHeader("Accept-Language", "en-US,en;q=0.8");
+            request.setAdditionalHeader("Connection", "keep-alive");
+            request.setAdditionalHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            request.setAdditionalHeader("DNT", "1");
+            request.setAdditionalHeader("Host", "account.mojang.com");
+            request.setAdditionalHeader("Origin", "https://account.mojang.com");
+            request.setAdditionalHeader("Referer", this.url);
+            request.setAdditionalHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36");
+            request.setAdditionalHeader("X-Requested-With", "XMLHttpRequest");
+            
+            request.setRequestParameters(new ArrayList<NameValuePair>());
+            request.getRequestParameters().add(new NameValuePair("authenticityToken", this.authToken));
+            request.getRequestParameters().add(new NameValuePair("newName", this.name));
+            request.getRequestParameters().add(new NameValuePair("password", this.password));
+
+            String fullAddress = this.proxy.toString().split("/")[1];
+            String proxyAddress = fullAddress.split(":")[0];
+            int proxyPort = Integer.parseInt(fullAddress.split(":")[1]);
+            
+            client = new WebClient(BrowserVersion.CHROME, proxyAddress, proxyPort);
+            client.getOptions().setJavaScriptEnabled(false);
+            client.getOptions().setCssEnabled(false);
+            client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+            client.getOptions().setThrowExceptionOnScriptError(false);
+            
+            String response = client.getPage(request).getWebResponse().getContentAsString();
+                        
+//            String response = new SimpleHttpRequest(this.url)
+//                    .setProxy(this.proxy)
+//                    .addField("authenticityToken", this.authToken)
+//                    .addField("newName", this.name)
+//                    .addField("password", this.password)
+//                    .setType(RequestType.POST)
+//                    .setTimeout(30000)
+//                    .addHeader("Accept-Language", "en-US,en;q=0.8")
+//                    .setCookie("PLAY_SESSION", this.session)
+//                    .execute()
+//                    .getResponse();
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
@@ -89,6 +127,14 @@ public class NameChanger implements Runnable {
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
             this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
+        } finally {
+            if(client != null) {
+                try {
+                    client.close();
+                } catch (Exception ex) {
+                    
+                }
+            }
         }
     }
 
