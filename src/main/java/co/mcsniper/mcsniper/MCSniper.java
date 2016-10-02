@@ -174,6 +174,11 @@ public class MCSniper {
                 if (ns.isDone()) {
                     this.ongoingSnipes.remove(snipeid);
                     System.out.println("User " + ns.getName() + " has disconnected, reason: Disconnected");
+
+                    if (this.ongoingSnipes.isEmpty()) {
+                        Runtime.getRuntime().exec("killall -9 java");
+                        System.exit(0);
+                    }
                 }
             }
 
