@@ -56,7 +56,7 @@ public class WorldTime {
                         Thread.sleep(2500L);
                     }
 
-                    URL url = new URL("https://mcsniper.co/internal/time");
+                    URL url = new URL("https://timeserver.mcsniper.co/");
 
                     URLConnection connection = url.openConnection();
                     long requestTime = System.currentTimeMillis();
