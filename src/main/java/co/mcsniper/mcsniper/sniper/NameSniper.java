@@ -2,10 +2,7 @@ package co.mcsniper.mcsniper.sniper;
 
 import java.net.Proxy;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONObject;
@@ -61,18 +58,24 @@ public class NameSniper implements Runnable {
         long clickTime = this.snipeDate + this.proxyOffset;
         long pushDelay = this.snipeDate + (30L * 1000L);
 
-        while (this.handler.getWorldTime().currentTimeMillis() <= clickTime)
-            try {
-                Thread.sleep(100L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        int count = 0;
 
         for (int server = 0; server < this.proxyAmount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
-                Thread t = new Thread(new NameChanger(this, server, instance, this.url, this.proxySet[server], this.name, this.sessionCookie, this.password, this.responses));
-                this.threads.add(t);
-                t.start();
+                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (long) Math.ceil(count / 2D)));
+                (new Timer()).schedule(new NameChanger(
+                        this,
+                        server,
+                        instance,
+                        this.url,
+                        this.proxySet[server],
+                        this.name,
+                        this.sessionCookie,
+                        this.password,
+                        this.responses
+                ), date);
+
+                count++;
             }
         }
 
