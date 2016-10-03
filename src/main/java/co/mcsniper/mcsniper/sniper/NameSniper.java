@@ -59,10 +59,11 @@ public class NameSniper implements Runnable {
         long pushDelay = this.snipeDate + (30L * 1000L);
 
         int count = 0;
+        long systemTimeOffset = System.currentTimeMillis() - this.getHandler().getWorldTime().currentTimeMillis();
 
         for (int server = 0; server < this.proxyAmount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
-                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (long) Math.ceil(count / 2D)) + (this.handler.getWorldTime().currentTimeMillis() - System.currentTimeMillis()));
+                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (long) Math.ceil(count / 2D)) + systemTimeOffset);
                 (new Timer()).schedule(new NameChanger(
                         this,
                         server,
