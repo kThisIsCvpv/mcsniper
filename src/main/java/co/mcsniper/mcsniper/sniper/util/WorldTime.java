@@ -7,6 +7,17 @@ import java.net.URLConnection;
 
 public class WorldTime {
 
+    public static void main(String[] args) throws Exception {
+        WorldTime wt = new WorldTime();
+        while(true) {
+            long time = System.currentTimeMillis();
+            long worldTime = wt.currentTimeMillis();
+            
+            System.out.println(time + " | " + worldTime + " | " + (worldTime - time));
+            Thread.sleep(100L);
+        }
+    }
+    
     private String[] timeDelay = new String[20];
     private Thread timedCalculator;
 
@@ -45,7 +56,7 @@ public class WorldTime {
                         Thread.sleep(2500L);
                     }
 
-                    URL url = new URL("https://www.kthisiscvpv.com/time.php");
+                    URL url = new URL("https://mcsniper.co/internal/time");
 
                     URLConnection connection = url.openConnection();
                     long requestTime = System.currentTimeMillis();
@@ -59,7 +70,7 @@ public class WorldTime {
                     }
 
                     String readLine = (parsed.trim().replaceAll("\\.", "") + "0000").substring(0, 13);
-                    long serverTime = Long.parseLong(readLine) - 30 + ((System.currentTimeMillis() - requestTime) / 2L);
+                    long serverTime = Long.parseLong(readLine) - ((System.currentTimeMillis() - requestTime) / 2L);
                     timeDelay[i] = Long.toString(serverTime - System.currentTimeMillis());
 
                     br.close();
