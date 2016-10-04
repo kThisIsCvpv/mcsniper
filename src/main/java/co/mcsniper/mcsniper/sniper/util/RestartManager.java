@@ -71,10 +71,9 @@ public class RestartManager {
                 specs += line;
             }
 
-            preparedStatement = connection.prepareStatement("INSERT INTO specs (?, ?) ON DUPLICATE KEY UPDATE specs = ?");
+            preparedStatement = connection.prepareStatement("INSERT INTO specs (node, specs) VALUES (?, ?) ON DUPLICATE KEY UPDATE specs = VALUES(specs)");
             preparedStatement.setString(1, this.sniper.getServerName());
             preparedStatement.setString(2, specs);
-            preparedStatement.setString(3, specs);
             preparedStatement.execute();
             preparedStatement.close();
 
