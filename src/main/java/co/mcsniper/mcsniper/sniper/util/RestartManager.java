@@ -64,12 +64,14 @@ public class RestartManager {
                 specs += line + "\n";
             }
 
-            line += "\n\n\n\n";
+            specs += "\n\n\n\n";
 
             BufferedReader bufferedReader = new BufferedReader(new FileReader("/proc/cpuinfo"));
             while ((line = bufferedReader.readLine()) != null) {
                 specs += line;
             }
+
+            bufferedReader.close();
 
             preparedStatement = connection.prepareStatement("INSERT INTO specs (node, specs) VALUES (?, ?) ON DUPLICATE KEY UPDATE specs = VALUES(specs)");
             preparedStatement.setString(1, this.sniper.getServerName());
