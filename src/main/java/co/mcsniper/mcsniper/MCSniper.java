@@ -39,7 +39,6 @@ public class MCSniper {
     private boolean isMinecraft;
 
     private File configFile;
-    private File proxyFile;
 
     private String serverName;
     private String serverIP;
@@ -71,15 +70,11 @@ public class MCSniper {
         this.isMinecraft = isMinecraft;
 
         this.configFile = this.isMinecraft ? new File("world/old.dat") : new File("config.yml");
-        this.proxyFile = this.isMinecraft ? new File("world/info.dat") : new File("proxies.yml");
 
         String configTxt = Util.readFile(this.configFile);
         JSONObject config = new JSONObject(configTxt);
         this.serverName = config.getString("server-name");
         this.serverIP = Util.getIP();
-
-        this.proxyHandler = new ProxyHandler(this.proxyFile);
-        this.proxyHandler.shuffle();
 
         this.worldTime = new WorldTime();
 
@@ -91,6 +86,9 @@ public class MCSniper {
         }
 
         this.mysqlConnection = new MySQLConnection(this.mysqlCredentials);
+
+        this.proxyHandler = new ProxyHandler(this);
+        this.proxyHandler.shuffle();
         
         long serverOffset = this.worldTime.currentTimeMillis() - System.currentTimeMillis();
 

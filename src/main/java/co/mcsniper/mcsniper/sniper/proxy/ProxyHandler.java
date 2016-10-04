@@ -1,10 +1,16 @@
 package co.mcsniper.mcsniper.sniper.proxy;
 
+import co.mcsniper.mcsniper.MCSniper;
+import co.mcsniper.mcsniper.sniper.mysql.MySQLConnection;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,22 +18,28 @@ import java.util.Scanner;
 
 public class ProxyHandler {
 
-    private ProxyValidator proxyValidator = new ProxyValidator();
-
     private List<Proxy> availableProxies = new ArrayList<>();
     private int currentProxy = 0;
 
-    public ProxyHandler(File inputFile) throws IOException {
-        Scanner fileScanner = new Scanner(inputFile);
+    public ProxyHandler(MCSniper sniper) throws IOException {
 
-        while (fileScanner.hasNextLine()) {
-            String proxy = fileScanner.nextLine().trim();
-            if (this.proxyValidator.validateProxy(proxy)) {
-                this.availableProxies.add(new Proxy(Type.HTTP, new InetSocketAddress(proxy.split(":")[0], Integer.parseInt(proxy.split(":")[1]))));
+        try {
+            Connection connection = sniper.getMySQL().createConnection();
+
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM proxies WHERE node = ? AND enabled = 1");
+            preparedStatement.setString(1, sniper.getServerName());
+            preparedStatement.setFetchSize(100);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                this.availableProxies.add(new Proxy(
+                        Proxy.Type.valueOf(resultSet.getString("type")),
+                        new InetSocketAddress(resultSet.getString("ip"), resultSet.getInt("port"))
+                ));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        fileScanner.close();
     }
 
     public List<Proxy> getProxies(int amount) {
