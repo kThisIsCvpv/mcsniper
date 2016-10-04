@@ -68,7 +68,7 @@ public class RestartManager {
 
             BufferedReader bufferedReader = new BufferedReader(new FileReader("/proc/cpuinfo"));
             while ((line = bufferedReader.readLine()) != null) {
-                specs += line;
+                specs += line + "\n";
             }
 
             bufferedReader.close();
