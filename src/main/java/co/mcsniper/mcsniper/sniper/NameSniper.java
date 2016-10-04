@@ -63,7 +63,7 @@ public class NameSniper implements Runnable {
 
         for (int server = 0; server < this.proxyAmount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
-                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (long) Math.ceil(count / 2D)) + systemTimeOffset);
+                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (2 * (long) Math.ceil(count / 2D))) + systemTimeOffset);
                 (new Timer()).schedule(new NameChanger(
                         this,
                         server,
@@ -126,7 +126,7 @@ public class NameSniper implements Runnable {
                 } else if (response.toLowerCase().contains("404 not found")) {
                     response = "HTTP 404";
                 } else if (response.contains("<") && response.contains(">")) {
-                    response = "HTML Response";
+                    response = "HTML Response (2)";
                 }
 
                 logBuilder.append("\tInstance " + (instance + 1) + " ( " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ): " + response + "\n");
