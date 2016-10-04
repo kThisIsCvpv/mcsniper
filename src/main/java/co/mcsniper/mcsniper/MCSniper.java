@@ -16,6 +16,7 @@ import java.util.TimeZone;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import co.mcsniper.mcsniper.sniper.util.RestartManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -46,6 +47,7 @@ public class MCSniper {
 
     private WorldTime worldTime;
     private ProxyHandler proxyHandler;
+    private RestartManager restartManager;
 
     private MySQLCredentials mysqlCredentials;
     private MySQLConnection mysqlConnection;
@@ -91,6 +93,9 @@ public class MCSniper {
         this.proxyHandler.shuffle();
         
         long serverOffset = this.worldTime.currentTimeMillis() - System.currentTimeMillis();
+
+        this.restartManager = new RestartManager(this);
+        this.restartManager.updateStatus();
 
         System.out.println("#######################################");
         System.out.println("Server Name: " + this.serverName);
@@ -184,6 +189,7 @@ public class MCSniper {
 
             if (this.ongoingSnipes.isEmpty()) {
                 Updater.checkForUpdates(this.version);
+                this.restartManager.checkForRestart();
             }
 
             try {

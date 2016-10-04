@@ -37,6 +37,10 @@ public class ProxyHandler {
                         new InetSocketAddress(resultSet.getString("ip"), resultSet.getInt("port"))
                 ));
             }
+
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
