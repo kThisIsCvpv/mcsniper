@@ -2,6 +2,9 @@ package co.mcsniper.mcsniper.sniper.util;
 
 import co.mcsniper.mcsniper.MCSniper;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,8 +50,34 @@ public class RestartManager {
                 }
             }
 
+            String specs = "";
+
             resultSet.close();
             preparedStatement.close();
+
+            Process p = Runtime.getRuntime().exec("free -h");
+            p.waitFor();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                specs += line + "\n";
+            }
+
+            line += "\n\n\n\n";
+
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("/proc/cpuinfo"));
+            while ((line = bufferedReader.readLine()) != null) {
+                specs += line;
+            }
+
+            preparedStatement = connection.prepareStatement("INSERT INTO specs (?, ?) ON DUPLICATE KEY UPDATE specs = ?");
+            preparedStatement.setString(1, this.sniper.getServerName());
+            preparedStatement.setString(2, specs);
+            preparedStatement.setString(3, specs);
+            preparedStatement.execute();
+            preparedStatement.close();
+
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
