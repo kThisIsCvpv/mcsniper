@@ -49,37 +49,6 @@ public class RestartManager {
                     System.exit(0);
                 }
             }
-
-            String specs = "";
-
-            resultSet.close();
-            preparedStatement.close();
-
-            Process p = Runtime.getRuntime().exec("free -h");
-            p.waitFor();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                specs += line + "\n";
-            }
-
-            specs += "\n\n\n\n";
-
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("/proc/cpuinfo"));
-            while ((line = bufferedReader.readLine()) != null) {
-                specs += line + "\n";
-            }
-
-            bufferedReader.close();
-
-            preparedStatement = connection.prepareStatement("INSERT INTO specs (node, specs) VALUES (?, ?) ON DUPLICATE KEY UPDATE specs = VALUES(specs)");
-            preparedStatement.setString(1, this.sniper.getServerName());
-            preparedStatement.setString(2, specs);
-            preparedStatement.execute();
-            preparedStatement.close();
-
-            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
