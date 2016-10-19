@@ -117,6 +117,7 @@ public class NameSniper implements Runnable {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
                 String response = this.responses[server][instance][0];
                 long responseTime = Long.parseLong(this.responses[server][instance][1] == null ? "0" : this.responses[server][instance][1]);
+                long webResponseTime = Long.parseLong(this.responses[server][instance][2] == null ? "0" : this.responses[server][instance][2]);
                 response = response == null ? "null" : StringEscapeUtils.unescapeJava(response.replaceAll("\n", " "));
 
                 if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
@@ -132,7 +133,7 @@ public class NameSniper implements Runnable {
                 logBuilder.append("\tInstance " + (instance + 1) + " ( " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ): " + response + "\n");
 
                 if (!response.equals("null")) {
-                    validResponses.add(responseTime + " " + response);
+                    validResponses.add(responseTime + " " + webResponseTime + " " + response);
                 }
 
                 String parsedResponse = response.contains("Exception: ") ? response.substring(0, response.indexOf("Exception: ") + 9) : response;
@@ -160,14 +161,15 @@ public class NameSniper implements Runnable {
         for (int x = 0; x < validResponses.size(); x++) {
             String orderedResponse = validResponses.get(x);
             String[] args = orderedResponse.split(" ");
-            int responseTime = Util.isInteger(args[0]) ? Integer.parseInt(args[0]) : 0;
+            long responseTime = Util.isLong(args[0]) ? Long.parseLong(args[0]) : 0;
+            long webResponseTime = Util.isLong(args[1]) ? Long.parseLong(args[1]) : 0;
 
             String response = "";
-            for (int i = 1; i < args.length; i++) {
-                response += (i == 1 ? "" : " ") + args[i];
+            for (int i = 2; i < args.length; i++) {
+                response += (i == 2 ? "" : " ") + args[i];
             }
 
-            logBuilder.append("[ " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ] " + response);
+            logBuilder.append("[ " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ] [" + (new DecimalFormat("+###,###;-###,###")).format(webResponseTime) + "ms ] " + response);
             if (x != (validResponses.size() - 1)) {
                 logBuilder.append("\n");
             }
@@ -184,7 +186,7 @@ public class NameSniper implements Runnable {
 
     public void start() {
         this.proxySet = new Proxy[this.proxyAmount];
-        this.responses = new String[this.proxyAmount][this.proxyInstances][2];
+        this.responses = new String[this.proxyAmount][this.proxyInstances][3];
 
         List<Proxy> allocatedProxies = this.handler.getProxyHandler().getProxies(this.proxyAmount);
         for (int i = 0; i < this.proxySet.length; i++) {

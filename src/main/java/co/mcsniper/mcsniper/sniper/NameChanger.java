@@ -2,15 +2,11 @@ package co.mcsniper.mcsniper.sniper;
 
 import java.net.Proxy;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimerTask;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
@@ -104,12 +100,29 @@ public class NameChanger extends TimerTask {
             client.getOptions().setTimeout(45000);
             client.getCookieManager().addCookie(new Cookie("account.mojang.com", "PLAY_SESSION", this.session));
 
-            String response = client.getPage(request).getWebResponse().getContentAsString();
+            WebResponse webResponse = client.getPage(request).getWebResponse();
+
+            String date = webResponse.getResponseHeaderValue("Date");
+            long webEndTime = -1;
+
+            if (date != null) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EE, dd MMM yyyy HH:mm:ss z", Locale.US);
+                simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+                try {
+                    webEndTime = simpleDateFormat.parse(date).getTime();
+                } catch (ParseException e) {
+                    webEndTime = -1;
+                }
+            }
+
+            String response = webResponse.getContentAsString();
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
             this.log[this.server][this.instance][0] = response;
             this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
+            this.log[this.server][this.instance][2] = webEndTime == -1 ? "0" : (webEndTime - this.main.getDate()) + "";
 
             if (response.contains("Name changed")) {
                 this.main.setSuccessful();
@@ -119,6 +132,7 @@ public class NameChanger extends TimerTask {
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
             this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
+            this.log[this.server][this.instance][2] = "0";
         } finally {
             if(client != null) {
                 try {

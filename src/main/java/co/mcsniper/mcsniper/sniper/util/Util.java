@@ -40,4 +40,13 @@ public class Util {
         }
     }
 
+    public static boolean isLong(String x) {
+        try {
+            Long.parseLong(x);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 }
