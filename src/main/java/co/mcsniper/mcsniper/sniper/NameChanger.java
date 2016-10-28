@@ -120,9 +120,21 @@ public class NameChanger extends TimerTask {
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
+            String via = webResponse.getResponseHeaderValue("Via");
+
+            if (via != null) {
+                String[] parts = via.split(" ");
+                if (parts.length == 3 && parts[1].contains(".cloudfront.net")) {
+                    via = parts[1];
+                }
+            } else {
+                via = "Unknown";
+            }
+
             this.log[this.server][this.instance][0] = response;
             this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
             this.log[this.server][this.instance][2] = webEndTime == -1 ? "0" : (webEndTime - this.main.getDate()) + "";
+            this.log[this.server][this.instance][3] = via;
 
             if (response.contains("Name changed")) {
                 this.main.setSuccessful();
@@ -133,6 +145,7 @@ public class NameChanger extends TimerTask {
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
             this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
             this.log[this.server][this.instance][2] = "0";
+            this.log[this.server][this.instance][3] = "Unknown";
         } finally {
             if(client != null) {
                 try {
