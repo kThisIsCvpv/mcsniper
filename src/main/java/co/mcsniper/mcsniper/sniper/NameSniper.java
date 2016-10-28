@@ -10,8 +10,9 @@ import org.json.JSONObject;
 import co.mcsniper.mcsniper.MCSniper;
 import co.mcsniper.mcsniper.sniper.util.Util;
 
-@SuppressWarnings("deprecation")
 public class NameSniper implements Runnable {
+
+    private static final DecimalFormat timeFormat = new DecimalFormat("+###,###;-###,###");
 
     private MCSniper handler;
 
@@ -98,21 +99,21 @@ public class NameSniper implements Runnable {
         StringBuilder logBuilder = new StringBuilder();
         String parseDate = MCSniper.DATE_FORMAT.format(this.snipeDate);
 
-        logBuilder.append("Final Result: " + (this.successful ? "Successful" : "Failure") + "\n");
-        logBuilder.append("Server Name: " + this.handler.getServerName() + "\n");
-        logBuilder.append("Server Host: " + this.handler.getServerIP() + "\n\n");
-        logBuilder.append("Name: " + this.name + "\n");
-        logBuilder.append("Local Timestamp: " + parseDate + "\n");
-        logBuilder.append("UNIX Timestamp: " + this.snipeDate + "\n\n");
-        logBuilder.append("Proxy Count: " + this.proxyAmount + "\n");
-        logBuilder.append("Proxy Instances: " + this.proxyInstances + "\n");
-        logBuilder.append("Proxy Offset: " + (new DecimalFormat("+###,###;-###,###")).format(this.proxyOffset) + "ms\n\n");
+        logBuilder.append("Final Result: ").append(this.successful ? "Success\n" : "Fail\n");
+        logBuilder.append("Server Name: ").append(this.handler.getServerName()).append("\n");
+        logBuilder.append("Server Host: ").append(this.handler.getServerIP()).append("\n\n");
+        logBuilder.append("Name: ").append(this.name).append("\n");
+        logBuilder.append("Local Timestamp: ").append(parseDate).append("\n");
+        logBuilder.append("UNIX Timestamp: ").append(this.snipeDate).append("\n\n");
+        logBuilder.append("Proxy Count: ").append(this.proxyAmount).append("\n");
+        logBuilder.append("Proxy Instances: ").append(this.proxyInstances).append("\n");
+        logBuilder.append("Proxy Offset: ").append((new DecimalFormat("+###,###;-###,###")).format(this.proxyOffset)).append("ms\n\n");
 
         JSONObject responses = new JSONObject();
         List<String> validResponses = new ArrayList<String>();
 
         for (int server = 0; server < this.proxyAmount; server++) {
-            logBuilder.append("Session #" + (server + 1) + ": " + proxySet[server].toString() + "\n");
+            logBuilder.append("Session #").append(server + 1).append(": ").append(proxySet[server].toString()).append("\n");
 
             for (int instance = 0; instance < this.proxyInstances; instance++) {
                 String response = this.responses[server][instance][0];
@@ -130,7 +131,13 @@ public class NameSniper implements Runnable {
                     response = "HTML Response (2)";
                 }
 
-                logBuilder.append("\tInstance " + (instance + 1) + " ( " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ): " + response + "\n");
+                logBuilder.append("\tInstance ")
+                        .append(instance + 1)
+                        .append(" ( ")
+                        .append(timeFormat.format(responseTime))
+                        .append("ms ): ")
+                        .append(response)
+                        .append("\n");
 
                 if (!response.equals("null")) {
                     validResponses.add(responseTime + " " + webResponseTime + " " + response);
@@ -158,6 +165,7 @@ public class NameSniper implements Runnable {
         });
 
         logBuilder.append("#####################################\n\n");
+
         for (int x = 0; x < validResponses.size(); x++) {
             String orderedResponse = validResponses.get(x);
             String[] args = orderedResponse.split(" ");
@@ -169,7 +177,12 @@ public class NameSniper implements Runnable {
                 response += (i == 2 ? "" : " ") + args[i];
             }
 
-            logBuilder.append("[ " + (new DecimalFormat("+###,###;-###,###")).format(responseTime) + "ms ] [" + (new DecimalFormat("+###,###;-###,###")).format(webResponseTime) + "ms ] " + response);
+            logBuilder.append("[ ")
+                    .append(timeFormat.format(responseTime))
+                    .append("ms ] [")
+                    .append(timeFormat.format(webResponseTime))
+                    .append("ms ] ")
+                    .append(response);
             if (x != (validResponses.size() - 1)) {
                 logBuilder.append("\n");
             }
