@@ -135,9 +135,7 @@ public class NameSniper implements Runnable {
                         .append(instance + 1)
                         .append(" ( ")
                         .append(timeFormat.format(responseTime))
-                        .append("ms ) ( ")
-                        .append(this.responses[server][instance][3] == null ? "Unknown" : this.responses[server][instance][3])
-                        .append(" ): ")
+                        .append("ms ): ")
                         .append(response)
                         .append("\n");
 
@@ -201,7 +199,7 @@ public class NameSniper implements Runnable {
 
     public void start() {
         this.proxySet = new Proxy[this.proxyAmount];
-        this.responses = new String[this.proxyAmount][this.proxyInstances][4];
+        this.responses = new String[this.proxyAmount][this.proxyInstances][3];
 
         List<Proxy> allocatedProxies = this.handler.getProxyHandler().getProxies(this.proxyAmount);
         for (int i = 0; i < this.proxySet.length; i++) {
