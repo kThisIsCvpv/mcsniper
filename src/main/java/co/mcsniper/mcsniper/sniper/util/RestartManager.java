@@ -1,13 +1,10 @@
 package co.mcsniper.mcsniper.sniper.util;
 
-import co.mcsniper.mcsniper.MCSniper;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import co.mcsniper.mcsniper.MCSniper;
 
 public class RestartManager {
 

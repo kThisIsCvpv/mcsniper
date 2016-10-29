@@ -1,20 +1,16 @@
 package co.mcsniper.mcsniper.sniper.proxy;
 
-import co.mcsniper.mcsniper.MCSniper;
-import co.mcsniper.mcsniper.sniper.mysql.MySQLConnection;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.Proxy.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
+
+import co.mcsniper.mcsniper.MCSniper;
 
 public class ProxyHandler {
 
