@@ -1,24 +1,29 @@
-package co.mcsniper.mcsniper.sniper;
+package co.mcsniper.mcsniper.sniper.variation.regular;
 
 import java.net.Proxy;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Timer;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONObject;
 
+import co.mcsniper.mcsniper.AbstractSniper;
 import co.mcsniper.mcsniper.MCSniper;
 import co.mcsniper.mcsniper.sniper.util.Util;
 
-public class NameSniper implements Runnable {
+@SuppressWarnings("deprecation")
+public class NameSniper extends AbstractSniper implements Runnable {
 
     private static final DecimalFormat timeFormat = new DecimalFormat("+###,###;-###,###");
 
     private MCSniper handler;
 
     private int snipeID;
-    private long snipeDate;
-    private String name;
 
     private String uuid;
     private String url;
@@ -39,11 +44,10 @@ public class NameSniper implements Runnable {
     private boolean done = false;
 
     public NameSniper(MCSniper handler, int snipeID, long snipeDate, String name, String uuid, String sessionCookie, String password, int proxyAmount, int proxyInstances, long proxyOffset) {
+        super(name, snipeDate);
+        
         this.handler = handler;
-
-        this.name = name;
         this.snipeID = snipeID;
-        this.snipeDate = snipeDate;
 
         this.uuid = uuid;
         this.url = "https://account.mojang.com/me/renameProfile/" + this.uuid;
@@ -56,8 +60,8 @@ public class NameSniper implements Runnable {
     }
 
     public void run() {
-        long clickTime = this.snipeDate + this.proxyOffset;
-        long pushDelay = this.snipeDate + (30L * 1000L);
+        long clickTime = this.getDate() + this.proxyOffset;
+        long pushDelay = this.getDate() + (30L * 1000L);
 
         int count = 0;
         long systemTimeOffset = System.currentTimeMillis() - this.getHandler().getWorldTime().currentTimeMillis();
@@ -71,7 +75,7 @@ public class NameSniper implements Runnable {
                         instance,
                         this.url,
                         this.proxySet[server],
-                        this.name,
+                        this.getName(),
                         this.sessionCookie,
                         this.password,
                         this.responses
@@ -97,14 +101,15 @@ public class NameSniper implements Runnable {
         }
 
         StringBuilder logBuilder = new StringBuilder();
-        String parseDate = MCSniper.DATE_FORMAT.format(this.snipeDate);
+        String parseDate = MCSniper.DATE_FORMAT.format(this.getDate());
 
         logBuilder.append("Final Result: ").append(this.successful ? "Success\n" : "Fail\n");
         logBuilder.append("Server Name: ").append(this.handler.getServerName()).append("\n");
         logBuilder.append("Server Host: ").append(this.handler.getServerIP()).append("\n\n");
-        logBuilder.append("Name: ").append(this.name).append("\n");
+        logBuilder.append("Name: ").append(this.getDate()).append("\n");
+        logBuilder.append("Gift Code Snipe: No\n");
         logBuilder.append("Local Timestamp: ").append(parseDate).append("\n");
-        logBuilder.append("UNIX Timestamp: ").append(this.snipeDate).append("\n\n");
+        logBuilder.append("UNIX Timestamp: ").append(this.getDate()).append("\n\n");
         logBuilder.append("Proxy Count: ").append(this.proxyAmount).append("\n");
         logBuilder.append("Proxy Instances: ").append(this.proxyInstances).append("\n");
         logBuilder.append("Proxy Offset: ").append((new DecimalFormat("+###,###;-###,###")).format(this.proxyOffset)).append("ms\n\n");
@@ -193,7 +198,7 @@ public class NameSniper implements Runnable {
         config.put("instances", this.proxyInstances);
         config.put("offset", this.proxyOffset);
 
-        this.handler.getMySQL().pushLog(this.handler.getServerName(), this.snipeID, this.name, parseDate, this.successful ? 1 : 0, logBuilder.toString(), responses, config);
+        this.handler.getMySQL().pushLog(this.handler.getServerName(), this.snipeID, this.getName(), parseDate, this.successful ? 1 : 0, logBuilder.toString(), responses, config);
         done = true;
     }
 
@@ -214,16 +219,8 @@ public class NameSniper implements Runnable {
         return this.handler;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
     public String getUUID() {
         return this.uuid;
-    }
-
-    public long getDate() {
-        return this.snipeDate;
     }
 
     public void setSuccessful() {

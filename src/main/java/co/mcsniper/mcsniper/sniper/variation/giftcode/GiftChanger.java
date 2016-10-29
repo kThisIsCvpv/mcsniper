@@ -1,22 +1,18 @@
-package co.mcsniper.mcsniper.sniper.giftcode;
-
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
+package co.mcsniper.mcsniper.sniper.variation.giftcode;
 
 import java.net.Proxy;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimerTask;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-public class GCChanger extends TimerTask {
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
-    private GCSniper main;
+public class GiftChanger extends TimerTask {
+
+    private GiftSniper main;
 
     private int server;
     private int instance;
@@ -25,19 +21,19 @@ public class GCChanger extends TimerTask {
 
     private String name;
     private String session;
+    private String code;
     private String authToken;
-    private String giftcode;
 
     private String[][][] log;
 
-    public GCChanger(GCSniper main, int server, int instance, Proxy proxy, String name, String session, String giftcode, String[][][] log) {
+    public GiftChanger(GiftSniper main, int server, int instance, Proxy proxy, String name, String session, String code, String[][][] log) {
         this.main = main;
         this.server = server;
         this.instance = instance;
         this.proxy = proxy;
         this.name = name;
         this.session = session;
-        this.giftcode = giftcode;
+        this.code = code;
         this.log = log;
 
         String rawSession = new String(this.session);
@@ -81,6 +77,7 @@ public class GCChanger extends TimerTask {
             request.setAdditionalHeader("DNT", "1");
             request.setAdditionalHeader("Host", "account.mojang.com");
             request.setAdditionalHeader("Origin", "https://account.mojang.com");
+            request.setAdditionalHeader("Referer", "https://account.mojang.com");
             request.setAdditionalHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36");
             request.setAdditionalHeader("X-Requested-With", "XMLHttpRequest");
 
@@ -89,7 +86,7 @@ public class GCChanger extends TimerTask {
             request.getRequestParameters().add(new NameValuePair("profileName", this.name));
             request.getRequestParameters().add(new NameValuePair("termsId", "231"));
             request.getRequestParameters().add(new NameValuePair("acceptTerms", "on"));
-            request.getRequestParameters().add(new NameValuePair("code", this.giftcode));
+            request.getRequestParameters().add(new NameValuePair("code", this.code));
 
             String fullAddress = this.proxy.toString().split("/")[1];
             String proxyAddress = fullAddress.split(":")[0];
@@ -100,17 +97,34 @@ public class GCChanger extends TimerTask {
             client.getOptions().setCssEnabled(false);
             client.getOptions().setThrowExceptionOnFailingStatusCode(false);
             client.getOptions().setThrowExceptionOnScriptError(false);
-            client.getOptions().setTimeout(45000);
+            client.getOptions().setTimeout(25000);
             client.getCookieManager().addCookie(new Cookie("account.mojang.com", "PLAY_SESSION", this.session));
 
-            String response = client.getPage(request).getWebResponse().getContentAsString();
+            WebResponse webResponse = client.getPage(request).getWebResponse();
+
+            String date = webResponse.getResponseHeaderValue("Date");
+            long webEndTime = -1;
+
+            if (date != null) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EE, dd MMM yyyy HH:mm:ss z", Locale.US);
+                simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+                try {
+                    webEndTime = simpleDateFormat.parse(date).getTime();
+                } catch (ParseException e) {
+                    webEndTime = -1;
+                }
+            }
+
+            String response = webResponse.getContentAsString();
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
             this.log[this.server][this.instance][0] = response;
             this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
+            this.log[this.server][this.instance][2] = webEndTime == -1 ? "0" : (webEndTime - this.main.getDate()) + "";
 
-            if (response.contains("Profile created")) {
+            if (response.contains("Profile created.")) {
                 this.main.setSuccessful();
             }
         } catch (Exception ex) {
@@ -118,6 +132,7 @@ public class GCChanger extends TimerTask {
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
             this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
+            this.log[this.server][this.instance][2] = "0";
         } finally {
             if(client != null) {
                 try {

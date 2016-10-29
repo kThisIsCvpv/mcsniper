@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper;
+package co.mcsniper.mcsniper.sniper.variation.regular;
 
 import java.net.Proxy;
 import java.net.URL;

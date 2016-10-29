@@ -20,7 +20,6 @@ import co.mcsniper.mcsniper.sniper.util.RestartManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import co.mcsniper.mcsniper.sniper.NameSniper;
 import co.mcsniper.mcsniper.sniper.mysql.MySQLConnection;
 import co.mcsniper.mcsniper.sniper.mysql.MySQLCredentials;
 import co.mcsniper.mcsniper.sniper.mysql.ServerInfo;
@@ -28,6 +27,8 @@ import co.mcsniper.mcsniper.sniper.proxy.ProxyHandler;
 import co.mcsniper.mcsniper.sniper.util.Updater;
 import co.mcsniper.mcsniper.sniper.util.Util;
 import co.mcsniper.mcsniper.sniper.util.WorldTime;
+import co.mcsniper.mcsniper.sniper.variation.giftcode.GiftSniper;
+import co.mcsniper.mcsniper.sniper.variation.regular.NameSniper;
 
 public class MCSniper {
 
@@ -52,7 +53,7 @@ public class MCSniper {
     private MySQLCredentials mysqlCredentials;
     private MySQLConnection mysqlConnection;
 
-    private HashMap<Integer, NameSniper> ongoingSnipes = new HashMap<>();
+    private HashMap<Integer, AbstractSniper> ongoingSnipes = new HashMap<Integer, AbstractSniper>();
 
     public MCSniper(boolean isMinecraft) throws IOException, SQLException, ClassNotFoundException {
         String classPath = MCSniper.class.getResource(MCSniper.class.getSimpleName() + ".class").toString();
@@ -91,7 +92,7 @@ public class MCSniper {
 
         this.proxyHandler = new ProxyHandler(this);
         this.proxyHandler.shuffle();
-        
+
         long serverOffset = this.worldTime.currentTimeMillis() - System.currentTimeMillis();
 
         this.restartManager = new RestartManager(this);
@@ -105,7 +106,7 @@ public class MCSniper {
         System.out.println("#######################################");
 
         while (true) {
-            Map<Integer, NameSniper> updatedSnipes = new HashMap<>();
+            Map<Integer, AbstractSniper> updatedSnipes = new HashMap<>();
             Connection con = null;
 
             try {
@@ -125,6 +126,7 @@ public class MCSniper {
                     String session = result.getString("session");
 
                     String serverDetails = result.getString("servers");
+                    boolean isGiftCode = result.getInt("is_giftcode") == 1;
 
                     JSONArray array = new JSONArray(serverDetails);
                     HashMap<String, ServerInfo> servers = new HashMap<>();
@@ -136,7 +138,11 @@ public class MCSniper {
 
                     if (servers.containsKey(this.serverName)) {
                         ServerInfo si = servers.get(this.serverName);
-                        updatedSnipes.put(snipeID, new NameSniper(this, snipeID, unixDate, nameToSnipe, uuid, session, password, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset()));
+                        if (isGiftCode) {
+                            updatedSnipes.put(snipeID, new GiftSniper(this, snipeID, unixDate, nameToSnipe, session, password, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset()));
+                        } else {
+                            updatedSnipes.put(snipeID, new NameSniper(this, snipeID, unixDate, nameToSnipe, uuid, session, password, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset()));
+                        }
                     }
 
                 }
@@ -160,11 +166,10 @@ public class MCSniper {
                     continue;
                 }
 
-                NameSniper ns = updatedSnipes.get(snipeid);
+                AbstractSniper ns = updatedSnipes.get(snipeid);
                 long secUntil = (ns.getDate() - this.worldTime.currentTimeMillis()) / 1000L;
 
                 if (secUntil >= (60) && secUntil <= (3 * 60)) {
-                    System.out.println("UUID of player " + ns.getName() + " is " + ns.getUUID());
                     this.ongoingSnipes.put(snipeid, ns);
                     ns.start();
                 }
@@ -172,12 +177,10 @@ public class MCSniper {
 
             List<Integer> snipes = new ArrayList<>(this.ongoingSnipes.keySet());
             for (int snipeid : snipes) {
-                NameSniper ns = this.ongoingSnipes.get(snipeid);
+                AbstractSniper ns = this.ongoingSnipes.get(snipeid);
 
                 if (ns.isDone()) {
                     this.ongoingSnipes.remove(snipeid);
-                    System.out.println("User " + ns.getName() + " has disconnected, reason: Disconnected");
-
                     if (this.ongoingSnipes.isEmpty()) {
                         Runtime.getRuntime().exec("killall -9 java");
                         System.exit(0);
