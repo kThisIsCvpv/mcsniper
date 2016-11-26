@@ -45,7 +45,7 @@ public class NameSniper extends AbstractSniper implements Runnable {
 
     public NameSniper(MCSniper handler, int snipeID, long snipeDate, String name, String uuid, String sessionCookie, String password, int proxyAmount, int proxyInstances, long proxyOffset) {
         super(name, snipeDate);
-        
+
         this.handler = handler;
         this.snipeID = snipeID;
 
@@ -69,17 +69,7 @@ public class NameSniper extends AbstractSniper implements Runnable {
         for (int server = 0; server < this.proxyAmount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
                 Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (2 * (long) Math.ceil(count / 2D))) + systemTimeOffset);
-                (new Timer()).schedule(new NameChanger(
-                        this,
-                        server,
-                        instance,
-                        this.url,
-                        this.proxySet[server],
-                        this.getName(),
-                        this.sessionCookie,
-                        this.password,
-                        this.responses
-                ), date);
+                (new Timer()).schedule(new NameChanger(this, server, instance, this.url, this.proxySet[server], this.getName(), this.sessionCookie, this.password, this.responses), date);
 
                 count++;
             }
@@ -136,13 +126,7 @@ public class NameSniper extends AbstractSniper implements Runnable {
                     response = "HTML Response (2)";
                 }
 
-                logBuilder.append("\tInstance ")
-                        .append(instance + 1)
-                        .append(" ( ")
-                        .append(timeFormat.format(responseTime))
-                        .append("ms ): ")
-                        .append(response)
-                        .append("\n");
+                logBuilder.append("\tInstance ").append(instance + 1).append(" ( ").append(timeFormat.format(responseTime)).append("ms ): ").append(response).append("\n");
 
                 if (!response.equals("null")) {
                     validResponses.add(responseTime + " " + webResponseTime + " " + response);
@@ -182,12 +166,7 @@ public class NameSniper extends AbstractSniper implements Runnable {
                 response += (i == 2 ? "" : " ") + args[i];
             }
 
-            logBuilder.append("[ ")
-                    .append(timeFormat.format(responseTime))
-                    .append("ms ] [")
-                    .append(timeFormat.format(webResponseTime))
-                    .append("ms ] ")
-                    .append(response);
+            logBuilder.append("[ ").append(timeFormat.format(responseTime)).append("ms ] [").append(timeFormat.format(webResponseTime)).append("ms ] ").append(response);
             if (x != (validResponses.size() - 1)) {
                 logBuilder.append("\n");
             }
@@ -232,4 +211,11 @@ public class NameSniper extends AbstractSniper implements Runnable {
         return this.done;
     }
 
+    public String getSession() {
+        return this.sessionCookie;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
 }

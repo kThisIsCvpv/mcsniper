@@ -16,7 +16,6 @@ import java.util.TimeZone;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import co.mcsniper.mcsniper.sniper.util.RestartManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,6 +23,8 @@ import co.mcsniper.mcsniper.sniper.mysql.MySQLConnection;
 import co.mcsniper.mcsniper.sniper.mysql.MySQLCredentials;
 import co.mcsniper.mcsniper.sniper.mysql.ServerInfo;
 import co.mcsniper.mcsniper.sniper.proxy.ProxyHandler;
+import co.mcsniper.mcsniper.sniper.util.RestartManager;
+import co.mcsniper.mcsniper.sniper.util.SecurityManager;
 import co.mcsniper.mcsniper.sniper.util.Updater;
 import co.mcsniper.mcsniper.sniper.util.Util;
 import co.mcsniper.mcsniper.sniper.util.WorldTime;
@@ -49,6 +50,7 @@ public class MCSniper {
     private WorldTime worldTime;
     private ProxyHandler proxyHandler;
     private RestartManager restartManager;
+    private SecurityManager securityManager;
 
     private MySQLCredentials mysqlCredentials;
     private MySQLConnection mysqlConnection;
@@ -92,6 +94,7 @@ public class MCSniper {
 
         this.proxyHandler = new ProxyHandler(this);
         this.proxyHandler.shuffle();
+        this.securityManager = new SecurityManager(this.proxyHandler);
 
         long serverOffset = this.worldTime.currentTimeMillis() - System.currentTimeMillis();
 
@@ -167,6 +170,12 @@ public class MCSniper {
                 }
 
                 AbstractSniper ns = updatedSnipes.get(snipeid);
+
+                if (ns instanceof NameSniper) { // Security Questions Bypass Algorithm 
+                    NameSniper nt = (NameSniper) ns;
+                    this.securityManager.verify(nt.getSession(), nt.getPassword());
+                } // End
+
                 long secUntil = (ns.getDate() - this.worldTime.currentTimeMillis()) / 1000L;
 
                 if (secUntil >= (60) && secUntil <= (3 * 60)) {

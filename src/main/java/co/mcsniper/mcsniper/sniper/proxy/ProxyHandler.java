@@ -28,10 +28,7 @@ public class ProxyHandler {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                this.availableProxies.add(new Proxy(
-                        Proxy.Type.valueOf(resultSet.getString("type")),
-                        new InetSocketAddress(resultSet.getString("ip"), resultSet.getInt("port"))
-                ));
+                this.availableProxies.add(new Proxy(Proxy.Type.valueOf(resultSet.getString("type")), new InetSocketAddress(resultSet.getString("ip"), resultSet.getInt("port"))));
             }
 
             resultSet.close();
@@ -40,6 +37,10 @@ public class ProxyHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Proxy> getAllProxies() {
+        return this.availableProxies;
     }
 
     public List<Proxy> getProxies(int amount) {
