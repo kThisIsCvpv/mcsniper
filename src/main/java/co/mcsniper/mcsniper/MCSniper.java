@@ -70,6 +70,7 @@ public class MCSniper {
         Attributes attr = manifest.getMainAttributes();
 
         this.version = "v" + attr.getValue("Build-Version");
+        System.out.println("Running build " + this.version);
 
         Class.forName("com.mysql.jdbc.Driver");
         this.isMinecraft = isMinecraft;
