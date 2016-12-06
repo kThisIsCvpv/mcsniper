@@ -84,7 +84,7 @@ public class MCSniper {
 
         this.worldTime = new WorldTime();
 
-        this.mysqlCredentials = new MySQLCredentials("45.35.82.78:3306", "minecraft", "!3@J*qY68ejOhg8AjuxfSKlkTS6vf@b3", "minecraft");
+        this.mysqlCredentials = new MySQLCredentials("104.217.248.19:3306", "minecraft", "!3@J*qY68ejOhg8AjuxfSKlkTS6vf@b3", "minecraft");
 
         if (!this.mysqlCredentials.verifyConnection()) {
             System.out.println("Unable to connect to MySQL Server.");
