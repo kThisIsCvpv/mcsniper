@@ -40,7 +40,7 @@ public class ProxyHandler {
 
 			if (url != null) {
 				this.availableProxies = listProxies(url);
-				System.out.println("Successfully loaded " + this.availableProxies + " different entries!");
+				System.out.println("Successfully loaded " + this.availableProxies.size() + " different entries!");
 			} else {
 				throw new Exception("Unable to find proxy list for server!");
 			}
