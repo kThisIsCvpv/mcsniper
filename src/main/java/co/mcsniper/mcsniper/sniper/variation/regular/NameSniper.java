@@ -68,7 +68,7 @@ public class NameSniper extends AbstractSniper implements Runnable {
 
         for (int server = 0; server < this.proxyAmount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
-                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (0 * (long) Math.ceil(count / 2D))) + systemTimeOffset);
+                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (1 * (long) Math.ceil(count / 2D))) + systemTimeOffset);
                 (new Timer()).schedule(new NameChanger(this, server, instance, this.url, this.proxySet[server], this.getName(), this.sessionCookie, this.password, this.responses), date);
 
                 count++;
