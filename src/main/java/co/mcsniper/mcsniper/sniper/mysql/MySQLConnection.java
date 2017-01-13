@@ -16,7 +16,7 @@ public class MySQLConnection {
     }
 
     public Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://" + this.credentials.getHost() + "/" + this.credentials.getDatabase(), this.credentials.getUsername(), this.credentials.getPassword());
+        return DriverManager.getConnection("jdbc:mysql://" + this.credentials.getHost() + "/" + this.credentials.getDatabase() + "?useSSL=false", this.credentials.getUsername(), this.credentials.getPassword());
     }
 
     public void pushLog(String serverName, int snipeID, String name, String time, int success, String log, JSONObject responses, JSONObject config) {
