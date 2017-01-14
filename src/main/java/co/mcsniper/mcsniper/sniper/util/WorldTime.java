@@ -56,7 +56,7 @@ public class WorldTime {
                         Thread.sleep(2500L);
                     }
 
-                    URL url = new URL("http://104.217.248.22/");
+                    URL url = new URL("http://45.35.158.30/");
 
                     URLConnection connection = url.openConnection();
                     long requestTime = System.currentTimeMillis();
