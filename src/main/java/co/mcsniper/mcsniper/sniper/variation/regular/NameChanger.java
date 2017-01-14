@@ -97,7 +97,7 @@ public class NameChanger extends TimerTask {
             client.getOptions().setCssEnabled(false);
             client.getOptions().setThrowExceptionOnFailingStatusCode(false);
             client.getOptions().setThrowExceptionOnScriptError(false);
-            client.getOptions().setTimeout(25000);
+            client.getOptions().setTimeout(45000);
             client.getCookieManager().addCookie(new Cookie("account.mojang.com", "PLAY_SESSION", this.session));
 
             WebResponse webResponse = client.getPage(request).getWebResponse();
