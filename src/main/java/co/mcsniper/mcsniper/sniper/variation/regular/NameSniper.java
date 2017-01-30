@@ -61,7 +61,7 @@ public class NameSniper extends AbstractSniper implements Runnable {
 
     public void run() {
         long clickTime = this.getDate() + this.proxyOffset;
-        long pushDelay = this.getDate() + (30L * 1000L);
+        long pushDelay = this.getDate() + (60L * 1000L);
 
         int count = 0;
         long systemTimeOffset = System.currentTimeMillis() - this.getHandler().getWorldTime().currentTimeMillis();

@@ -24,6 +24,13 @@ public class RestartManager {
             preparedStatement.setString(1, this.sniper.getServerName());
             preparedStatement.execute();
             preparedStatement.close();
+
+            preparedStatement = connection.prepareStatement("INSERT INTO version VALUES (?, ?) ON DUPLICATE KEY UPDATE version = ?");
+            preparedStatement.setString(1, this.sniper.getServerName());
+            preparedStatement.setString(2, this.sniper.getVersion());
+            preparedStatement.setString(3, this.sniper.getVersion());
+            preparedStatement.execute();
+            preparedStatement.close();
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -233,4 +233,8 @@ public class MCSniper {
         return this.mysqlConnection;
     }
 
+    public String getVersion() {
+        return this.version;
+    }
+
 }
