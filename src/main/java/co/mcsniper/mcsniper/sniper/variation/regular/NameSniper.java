@@ -117,7 +117,7 @@ public class NameSniper extends AbstractSniper implements Runnable {
                 response = response == null ? "null" : StringEscapeUtils.unescapeJava(response.replaceAll("\n", " "));
 
                 if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
-                    response = "HTML Response: " + response.replace("\n", "").replace("\r", "");
+                    response = "HTML: " + response.replace("\n", "").replace("\r", "");
                 } else if (response.toLowerCase().contains("501 not implemented")) {
                     response = "HTTP 501";
                 } else if (response.toLowerCase().contains("404 not found")) {
