@@ -116,8 +116,10 @@ public class NameSniper extends AbstractSniper implements Runnable {
                 long webResponseTime = Long.parseLong(this.responses[server][instance][2] == null ? "0" : this.responses[server][instance][2]);
                 response = response == null ? "null" : StringEscapeUtils.unescapeJava(response.replaceAll("\n", " "));
 
-                if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
-                    response = "HTML: " + response.replace("\n", "").replace("\r", "");
+                if (response.toLowerCase().contains("the request could not be satisfied")) {
+                    response = "Request not Satisfied";
+                } else if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
+                    response = "HTML Response";
                 } else if (response.toLowerCase().contains("501 not implemented")) {
                     response = "HTTP 501";
                 } else if (response.toLowerCase().contains("404 not found")) {
