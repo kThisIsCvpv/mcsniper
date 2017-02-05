@@ -126,6 +126,8 @@ public class NameSniper extends AbstractSniper implements Runnable {
                     response = "HTTP 404";
                 } else if (response.contains("<") && response.contains(">")) {
                     response = "HTML Response (2)";
+                } else if (response.replace(" ", "").equals("")) {
+                    response = "Empty";
                 }
 
                 logBuilder.append("\tInstance ").append(instance + 1).append(" ( ").append(timeFormat.format(responseTime)).append("ms ): ").append(response).append("\n");
