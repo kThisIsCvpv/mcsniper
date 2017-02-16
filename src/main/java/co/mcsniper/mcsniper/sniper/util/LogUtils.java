@@ -7,8 +7,6 @@ public class LogUtils {
             response = "Request not Satisfied";
         } else if (response.contains("This exception has been logged with id")) {
             response= "Application Error";
-        } else if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
-            response = response.replace("\r", "").replace("\n", "");
         } else if (response.toLowerCase().contains("501 not implemented")) {
             response = "HTTP 501";
         } else if (response.toLowerCase().contains("404 not found")) {
@@ -21,6 +19,8 @@ public class LogUtils {
             response = "HTTP 500";
         } else if (response.replace(" ", "").equals("")) {
             response = "Empty";
+        } else if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
+            response = response.replace("\r", "").replace("\n", "");
         }
 
         return response;
