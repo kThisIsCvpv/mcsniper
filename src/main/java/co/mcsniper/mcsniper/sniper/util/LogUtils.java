@@ -17,6 +17,8 @@ public class LogUtils {
             response = "HTTP 403";
         } else if (response.toLowerCase().contains("502 bad gateway")) {
             response = "HTTP 502";
+        } else if (response.toLowerCase().contains("500 internal server error")) {
+            response = "HTTP 500";
         } else if (response.replace(" ", "").equals("")) {
             response = "Empty";
         }
