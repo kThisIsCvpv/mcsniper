@@ -118,6 +118,8 @@ public class NameSniper extends AbstractSniper implements Runnable {
 
                 if (response.toLowerCase().contains("the request could not be satisfied")) {
                     response = "Request not Satisfied";
+                } else if (response.contains("This exception has been logged with id")) {
+                    response= "Web Server Exception";
                 } else if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
                     response = response.replace("\r", "").replace("\n", "");
                 } else if (response.toLowerCase().contains("501 not implemented")) {
