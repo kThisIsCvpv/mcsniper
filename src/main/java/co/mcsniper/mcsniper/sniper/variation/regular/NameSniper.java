@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 
+import co.mcsniper.mcsniper.sniper.util.LogUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONObject;
 
@@ -116,19 +117,7 @@ public class NameSniper extends AbstractSniper implements Runnable {
                 long webResponseTime = Long.parseLong(this.responses[server][instance][2] == null ? "0" : this.responses[server][instance][2]);
                 response = response == null ? "null" : StringEscapeUtils.unescapeJava(response.replaceAll("\n", " "));
 
-                if (response.toLowerCase().contains("the request could not be satisfied")) {
-                    response = "Request not Satisfied";
-                } else if (response.contains("This exception has been logged with id")) {
-                    response= "Web Server Exception";
-                } else if (response.toLowerCase().contains("<!doctype") || response.toLowerCase().contains("<html")) {
-                    response = response.replace("\r", "").replace("\n", "");
-                } else if (response.toLowerCase().contains("501 not implemented")) {
-                    response = "HTTP 501";
-                } else if (response.toLowerCase().contains("404 not found")) {
-                    response = "HTTP 404";
-                } else if (response.replace(" ", "").equals("")) {
-                    response = "Empty";
-                }
+                response = LogUtils.formatResponse(response);
 
                 logBuilder.append("\tInstance ").append(instance + 1).append(" ( ").append(timeFormat.format(responseTime)).append("ms ): ").append(response).append("\n");
 
