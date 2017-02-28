@@ -75,7 +75,7 @@ public class ResponseLog {
             sb.append(StringUtils.rightPad(response.getProxy().toString(), 30, " "));
             sb.append("[ ").append(timeFormat.format(response.getOffset())).append("ms ] [ ");
             sb.append(timeFormat.format(response.getWebOffset())).append("ms ] ");
-            sb.append("( HTTP ").append(response.getStatusCode()).append(") ");
+            sb.append("( HTTP ").append(response.getStatusCode()).append(" ) ");
             sb.append(response.getResponse()).append("\n");
 
             String parsedResponse = response.getResponse().contains("Exception: ") ? response.getResponse().substring(0, response.getResponse().indexOf("Exception: ") + 9) : response.getResponse();
