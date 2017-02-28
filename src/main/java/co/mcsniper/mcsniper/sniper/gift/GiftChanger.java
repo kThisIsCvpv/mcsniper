@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper.variation.regular;
+package co.mcsniper.mcsniper.sniper.gift;
 
 import java.net.Proxy;
 import java.net.URL;
@@ -6,39 +6,30 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import co.mcsniper.mcsniper.sniper.Response;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
-public class NameChanger extends TimerTask {
+public class GiftChanger extends TimerTask {
 
-    private NameSniper main;
+    private GiftSniper main;
 
-    private int server;
-    private int instance;
-
-    private String url;
     private Proxy proxy;
 
     private String name;
     private String session;
-    private String password;
+    private String code;
     private String authToken;
 
-    private String[][][] log;
-
-    public NameChanger(NameSniper main, int server, int instance, String url, Proxy proxy, String name, String session, String password, String[][][] log) {
+    public GiftChanger(GiftSniper main, Proxy proxy, String name, String session, String code) {
         this.main = main;
-        this.server = server;
-        this.instance = instance;
-        this.url = url;
         this.proxy = proxy;
         this.name = name;
         this.session = session;
-        this.password = password;
-        this.log = log;
+        this.code = code;
 
-        String rawSession = new String(this.session);
+        String rawSession = this.session;
         if (rawSession.startsWith("\"") && rawSession.endsWith("\"") && rawSession.length() > 2) {
             rawSession = rawSession.substring(1, rawSession.length() - 1);
         }
@@ -69,7 +60,7 @@ public class NameChanger extends TimerTask {
         WebClient client = null;
 
         try {
-            WebRequest request = new WebRequest(new URL(this.url), HttpMethod.POST);
+            WebRequest request = new WebRequest(new URL("https://account.mojang.com/redeem/createProfile"), HttpMethod.POST);
 
             request.setAdditionalHeader("Accept", "*/*");
             request.setAdditionalHeader("Accept-Encoding", "gzip, deflate, br");
@@ -79,14 +70,16 @@ public class NameChanger extends TimerTask {
             request.setAdditionalHeader("DNT", "1");
             request.setAdditionalHeader("Host", "account.mojang.com");
             request.setAdditionalHeader("Origin", "https://account.mojang.com");
-            request.setAdditionalHeader("Referer", this.url);
+            request.setAdditionalHeader("Referer", "https://account.mojang.com");
             request.setAdditionalHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36");
             request.setAdditionalHeader("X-Requested-With", "XMLHttpRequest");
 
             request.setRequestParameters(new ArrayList<NameValuePair>());
             request.getRequestParameters().add(new NameValuePair("authenticityToken", this.authToken));
-            request.getRequestParameters().add(new NameValuePair("newName", this.name));
-            request.getRequestParameters().add(new NameValuePair("password", this.password));
+            request.getRequestParameters().add(new NameValuePair("profileName", this.name));
+            request.getRequestParameters().add(new NameValuePair("termsId", "231"));
+            request.getRequestParameters().add(new NameValuePair("acceptTerms", "on"));
+            request.getRequestParameters().add(new NameValuePair("code", this.code));
 
             String fullAddress = this.proxy.toString().split("/")[1];
             String proxyAddress = fullAddress.split(":")[0];
@@ -120,21 +113,29 @@ public class NameChanger extends TimerTask {
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
-            this.log[this.server][this.instance][0] = response;
-            this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
-            this.log[this.server][this.instance][2] = webEndTime == -1 ? "0" : (webEndTime - this.main.getDate()) + "";
+            this.main.getLog().addResponse(new Response(
+                    response,
+                    webResponse.getStatusCode(),
+                    endTime - this.main.getDate(),
+                    webEndTime == -1 ? 0 : webEndTime - this.main.getDate(),
+                    this.proxy
+            ));
 
-            if (response.contains("Name changed")) {
+            if (response.contains("Profile created.")) {
                 this.main.setSuccessful();
             }
         } catch (Exception ex) {
-            this.log[this.server][this.instance][0] = ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : "");
-
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
-            this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
-            this.log[this.server][this.instance][2] = "0";
+
+            this.main.getLog().addResponse(new Response(
+                    ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""),
+                    0,
+                    endTime - this.main.getDate(),
+                    0,
+                    this.proxy
+            ));
         } finally {
-            if(client != null) {
+            if (client != null) {
                 try {
                     client.close();
                 } catch (Exception ex) {

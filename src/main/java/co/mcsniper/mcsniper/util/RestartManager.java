@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper.util;
+package co.mcsniper.mcsniper.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

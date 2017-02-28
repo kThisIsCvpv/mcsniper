@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper.util;
+package co.mcsniper.mcsniper.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,24 +29,6 @@ public class Util {
 
         br.close();
         return sb.toString();
-    }
-
-    public static boolean isInteger(String x) {
-        try {
-            Integer.parseInt(x);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-    }
-
-    public static boolean isLong(String x) {
-        try {
-            Long.parseLong(x);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
 }

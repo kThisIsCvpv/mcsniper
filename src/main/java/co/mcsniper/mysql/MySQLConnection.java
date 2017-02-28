@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper.mysql;
+package co.mcsniper.mysql;
 
 import org.json.JSONObject;
 

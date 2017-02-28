@@ -16,20 +16,21 @@ import java.util.TimeZone;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import co.mcsniper.mcsniper.sniper.AbstractSniper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import co.mcsniper.mcsniper.sniper.mysql.MySQLConnection;
-import co.mcsniper.mcsniper.sniper.mysql.MySQLCredentials;
-import co.mcsniper.mcsniper.sniper.mysql.ServerInfo;
-import co.mcsniper.mcsniper.sniper.proxy.ProxyHandler;
-import co.mcsniper.mcsniper.sniper.util.RestartManager;
-import co.mcsniper.mcsniper.sniper.util.SecurityManager;
-import co.mcsniper.mcsniper.sniper.util.Updater;
-import co.mcsniper.mcsniper.sniper.util.Util;
-import co.mcsniper.mcsniper.sniper.util.WorldTime;
-import co.mcsniper.mcsniper.sniper.variation.giftcode.GiftSniper;
-import co.mcsniper.mcsniper.sniper.variation.regular.NameSniper;
+import co.mcsniper.mysql.MySQLConnection;
+import co.mcsniper.mysql.MySQLCredentials;
+import co.mcsniper.mysql.ServerInfo;
+import co.mcsniper.mcsniper.proxy.ProxyHandler;
+import co.mcsniper.mcsniper.util.RestartManager;
+import co.mcsniper.mcsniper.util.SecurityManager;
+import co.mcsniper.mcsniper.util.Updater;
+import co.mcsniper.mcsniper.util.Util;
+import co.mcsniper.mcsniper.util.WorldTime;
+import co.mcsniper.mcsniper.sniper.gift.GiftSniper;
+import co.mcsniper.mcsniper.sniper.name.NameSniper;
 
 public class MCSniper {
 
@@ -172,10 +173,10 @@ public class MCSniper {
 
                 AbstractSniper ns = updatedSnipes.get(snipeid);
 
-                if (ns instanceof NameSniper) { // Security Questions Bypass Algorithm 
+                /*if (ns instanceof NameSniper) { // Security Questions Bypass Algorithm
                     NameSniper nt = (NameSniper) ns;
                     this.securityManager.verify(nt.getSession(), nt.getPassword());
-                } // End
+                } // End*/
 
                 long secUntil = (ns.getDate() - this.worldTime.currentTimeMillis()) / 1000L;
 

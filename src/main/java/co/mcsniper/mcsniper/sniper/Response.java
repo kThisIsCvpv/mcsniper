@@ -1,6 +1,42 @@
-package co.mcsniper.mcsniper.sniper.util;
+package co.mcsniper.mcsniper.sniper;
 
-public class LogUtils {
+import java.net.Proxy;
+
+public class Response {
+
+    private String response;
+    private int statusCode;
+    private long offset;
+    private long webOffset;
+    private Proxy proxy;
+
+    public Response(String response, int statusCode, long offset, long webOffset, Proxy proxy) {
+        this.response = formatResponse(response);
+        this.statusCode = statusCode;
+        this.offset = offset;
+        this.webOffset = webOffset;
+        this.proxy = proxy;
+    }
+
+    public String getResponse() {
+        return this.response;
+    }
+
+    public int getStatusCode() {
+        return this.statusCode;
+    }
+
+    public long getOffset() {
+        return this.offset;
+    }
+
+    public long getWebOffset() {
+        return this.webOffset;
+    }
+
+    public Proxy getProxy() {
+        return this.proxy;
+    }
 
     public static String formatResponse(String response) {
         if (response.toLowerCase().contains("the request could not be satisfied")) {

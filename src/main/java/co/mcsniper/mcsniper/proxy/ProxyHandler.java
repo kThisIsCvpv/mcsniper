@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper.proxy;
+package co.mcsniper.mcsniper.proxy;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

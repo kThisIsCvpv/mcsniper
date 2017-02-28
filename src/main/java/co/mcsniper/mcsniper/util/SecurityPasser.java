@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper.util;
+package co.mcsniper.mcsniper.util;
 
 import java.net.Proxy;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import com.lyphiard.simplerequest.RequestType;
 import com.lyphiard.simplerequest.SimpleHttpRequest;
 import com.lyphiard.simplerequest.SimpleHttpResponse;
 
-import co.mcsniper.mcsniper.sniper.proxy.ProxyHandler;
+import co.mcsniper.mcsniper.proxy.ProxyHandler;
 
 public class SecurityPasser implements Runnable {
 

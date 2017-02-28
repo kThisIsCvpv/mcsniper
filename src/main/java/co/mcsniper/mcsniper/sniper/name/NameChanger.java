@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper.variation.giftcode;
+package co.mcsniper.mcsniper.sniper.name;
 
 import java.net.Proxy;
 import java.net.URL;
@@ -6,37 +6,31 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import co.mcsniper.mcsniper.sniper.Response;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
-public class GiftChanger extends TimerTask {
+public class NameChanger extends TimerTask {
 
-    private GiftSniper main;
-
-    private int server;
-    private int instance;
-
+    private NameSniper main;
     private Proxy proxy;
 
+    private String uuid;
     private String name;
     private String session;
-    private String code;
+    private String password;
     private String authToken;
 
-    private String[][][] log;
-
-    public GiftChanger(GiftSniper main, int server, int instance, Proxy proxy, String name, String session, String code, String[][][] log) {
+    public NameChanger(NameSniper main, String uuid, Proxy proxy, String name, String session, String password) {
         this.main = main;
-        this.server = server;
-        this.instance = instance;
+        this.uuid = uuid;
         this.proxy = proxy;
         this.name = name;
         this.session = session;
-        this.code = code;
-        this.log = log;
+        this.password = password;
 
-        String rawSession = new String(this.session);
+        String rawSession = this.session;
         if (rawSession.startsWith("\"") && rawSession.endsWith("\"") && rawSession.length() > 2) {
             rawSession = rawSession.substring(1, rawSession.length() - 1);
         }
@@ -59,7 +53,7 @@ public class GiftChanger extends TimerTask {
         this.authToken = arguments.get("___AT");
 
         if (this.authToken == null) {
-            throw new NullPointerException("Unable to properly identify Authenticity Token in cookie.");
+            throw new RuntimeException("Unable to properly identify Authenticity Token in cookie.");
         }
     }
 
@@ -67,7 +61,7 @@ public class GiftChanger extends TimerTask {
         WebClient client = null;
 
         try {
-            WebRequest request = new WebRequest(new URL("https://account.mojang.com/redeem/createProfile"), HttpMethod.POST);
+            WebRequest request = new WebRequest(new URL("https://account.mojang.com/me/renameProfile/" + this.uuid), HttpMethod.POST);
 
             request.setAdditionalHeader("Accept", "*/*");
             request.setAdditionalHeader("Accept-Encoding", "gzip, deflate, br");
@@ -77,16 +71,14 @@ public class GiftChanger extends TimerTask {
             request.setAdditionalHeader("DNT", "1");
             request.setAdditionalHeader("Host", "account.mojang.com");
             request.setAdditionalHeader("Origin", "https://account.mojang.com");
-            request.setAdditionalHeader("Referer", "https://account.mojang.com");
+            request.setAdditionalHeader("Referer", "https://account.mojang.com/me/renameProfile/" + this.uuid);
             request.setAdditionalHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36");
             request.setAdditionalHeader("X-Requested-With", "XMLHttpRequest");
 
             request.setRequestParameters(new ArrayList<NameValuePair>());
             request.getRequestParameters().add(new NameValuePair("authenticityToken", this.authToken));
-            request.getRequestParameters().add(new NameValuePair("profileName", this.name));
-            request.getRequestParameters().add(new NameValuePair("termsId", "231"));
-            request.getRequestParameters().add(new NameValuePair("acceptTerms", "on"));
-            request.getRequestParameters().add(new NameValuePair("code", this.code));
+            request.getRequestParameters().add(new NameValuePair("newName", this.name));
+            request.getRequestParameters().add(new NameValuePair("password", this.password));
 
             String fullAddress = this.proxy.toString().split("/")[1];
             String proxyAddress = fullAddress.split(":")[0];
@@ -120,21 +112,29 @@ public class GiftChanger extends TimerTask {
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
-            this.log[this.server][this.instance][0] = response;
-            this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
-            this.log[this.server][this.instance][2] = webEndTime == -1 ? "0" : (webEndTime - this.main.getDate()) + "";
+            this.main.getLog().addResponse(new Response(
+                    response,
+                    webResponse.getStatusCode(),
+                    endTime - this.main.getDate(),
+                    webEndTime == -1 ? 0 : webEndTime - this.main.getDate(),
+                    this.proxy
+            ));
 
-            if (response.contains("Profile created.")) {
+            if (response.contains("Name changed")) {
                 this.main.setSuccessful();
             }
         } catch (Exception ex) {
-            this.log[this.server][this.instance][0] = ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : "");
-
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
-            this.log[this.server][this.instance][1] = (endTime - this.main.getDate()) + "";
-            this.log[this.server][this.instance][2] = "0";
+
+            this.main.getLog().addResponse(new Response(
+                    ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""),
+                    0,
+                    endTime - this.main.getDate(),
+                    0,
+                    this.proxy
+            ));
         } finally {
-            if(client != null) {
+            if (client != null) {
                 try {
                     client.close();
                 } catch (Exception ex) {

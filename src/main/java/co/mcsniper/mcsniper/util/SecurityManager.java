@@ -1,9 +1,9 @@
-package co.mcsniper.mcsniper.sniper.util;
+package co.mcsniper.mcsniper.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import co.mcsniper.mcsniper.sniper.proxy.ProxyHandler;
+import co.mcsniper.mcsniper.proxy.ProxyHandler;
 
 public class SecurityManager {
 

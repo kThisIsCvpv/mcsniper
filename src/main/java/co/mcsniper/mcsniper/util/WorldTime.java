@@ -1,4 +1,4 @@
-package co.mcsniper.mcsniper.sniper.util;
+package co.mcsniper.mcsniper.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
