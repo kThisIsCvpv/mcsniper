@@ -62,7 +62,7 @@ public class ResponseLog {
 
         sb.append("\n########## Response Log ##########\n\n");
 
-        DecimalFormat timeFormat = new DecimalFormat("+###,###;-###,###");
+        DecimalFormat timeFormat = new DecimalFormat("+###,###ms;-###,###ms");
 
         JSONObject responses = new JSONObject();
         JSONObject configuration = new JSONObject();
@@ -73,8 +73,8 @@ public class ResponseLog {
 
         for (Response response : validResponses) {
             sb.append(StringUtils.rightPad(response.getProxy().toString(), 30, " "));
-            sb.append("[ ").append(timeFormat.format(response.getOffset())).append("ms ] [ ");
-            sb.append(timeFormat.format(response.getWebOffset())).append("ms ] ");
+            sb.append("[ ").append(StringUtils.rightPad(timeFormat.format(response.getOffset()), 9)).append(" ] [ ");
+            sb.append(StringUtils.rightPad(timeFormat.format(response.getWebOffset()), 9)).append(" ] ");
             sb.append("( HTTP ").append(response.getStatusCode()).append(" ) ");
             sb.append(response.getResponse()).append("\n");
 
