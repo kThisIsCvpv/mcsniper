@@ -10,6 +10,11 @@ import java.util.TimerTask;
 
 public abstract class AbstractSniper implements Runnable {
 
+    /**
+     * The offset for each sequential request
+     */
+    private static double K_OFFSET = 0.7;
+
     private String name;
     private int snipeId;
     private int proxyCount;
@@ -92,7 +97,7 @@ public abstract class AbstractSniper implements Runnable {
 
         for (int server = 0; server < this.proxyCount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
-                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * (1 * (long) Math.ceil(count / 2D))) + systemTimeOffset);
+                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * ((long) (K_OFFSET * Math.ceil(count / 2D)))) + systemTimeOffset);
                 (new Timer()).schedule(this.createNameChanger(this, this.getProxies()[server], this.getName()), date);
 
                 count++;
