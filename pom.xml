@@ -101,7 +101,7 @@
                         </manifest>
                         <manifestEntries>
                             <Build-Date>${maven.build.timestamp}</Build-Date>
-                            <Build-Version>2.0.0-b94</Build-Version>
+                            <Build-Version>2.0.0-b${env.TRAVIS_BUILD_NUMBER}</Build-Version>
                         </manifestEntries>
                     </archive>
                     <finalName>MCSniper</finalName>
