@@ -113,6 +113,7 @@ public abstract class AbstractSniper implements Runnable {
         }
 
         this.log.pushLog();
+        this.done = true;
     }
 
     public boolean isDone() {
