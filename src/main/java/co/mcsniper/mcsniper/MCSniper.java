@@ -90,6 +90,8 @@ public class MCSniper {
         if (!this.mysqlCredentials.verifyConnection()) {
             System.out.println("Unable to connect to MySQL Server.");
             return;
+        } else {
+            System.out.println("Connected to MySQL.");
         }
 
         this.mysqlConnection = new MySQLConnection(this.mysqlCredentials);
