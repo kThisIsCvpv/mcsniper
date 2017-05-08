@@ -14,7 +14,7 @@ public abstract class AbstractSniper implements Runnable {
      * The offset for each sequential request
      */
     private static double K_OFFSET = 1.00;
-    private static boolean USE_FUNCTION = true;
+    private static boolean USE_FUNCTION = false;
 
     private String name;
     private int snipeId;
