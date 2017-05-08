@@ -73,7 +73,7 @@ public class ResponseLog {
 
         configuration.put("proxies", this.sniper.getProxyCount())
                 .put("instances", this.sniper.getProxyInstances())
-                .put("offset", this.sniper.getProxyOffset());
+                .put("offset", this.sniper.isUseFunction() ? 0 : this.sniper.getProxyOffset());
 
         for (Response response : validResponses) {
             sb.append(StringUtils.rightPad(response.getProxy().toString(), 30, " "));

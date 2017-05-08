@@ -129,6 +129,10 @@ public abstract class AbstractSniper implements Runnable {
         return this.done;
     }
 
+    public boolean isUseFunction() {
+        return this.useFunction;
+    }
+
     public void setSuccessful() {
         this.log.setSuccess(true);
         this.handler.getMySQL().updateStatus(this.getSnipeId(), 1);
