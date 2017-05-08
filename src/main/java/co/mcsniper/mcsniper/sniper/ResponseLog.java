@@ -39,7 +39,8 @@ public class ResponseLog {
         StringBuilder sb = new StringBuilder();
 
         sb.append("Server Name: ").append(this.handler.getServerName()).append("\n");
-        sb.append("Server Host: ").append(this.handler.getServerIP()).append("\n\n");
+        sb.append("Server Host: ").append(this.handler.getServerIP()).append("\n");
+        sb.append("Program Version: ").append(this.handler.getVersion()).append("\n\n");
 
         sb.append("Snipe Name: ").append(this.sniper.getName()).append("\n");
         sb.append("Snipe Date: ").append(this.sniper.getDate()).append("\n");

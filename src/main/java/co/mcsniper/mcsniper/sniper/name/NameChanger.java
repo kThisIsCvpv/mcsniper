@@ -21,14 +21,16 @@ public class NameChanger extends TimerTask {
     private String session;
     private String password;
     private String authToken;
+    private long proxyOffset;
 
-    public NameChanger(NameSniper main, String uuid, Proxy proxy, String name, String session, String password) {
+    public NameChanger(NameSniper main, String uuid, Proxy proxy, String name, String session, String password, long proxyOffset) {
         this.main = main;
         this.uuid = uuid;
         this.proxy = proxy;
         this.name = name;
         this.session = session;
         this.password = password;
+        this.proxyOffset = proxyOffset;
 
         String rawSession = this.session;
         if (rawSession.startsWith("\"") && rawSession.endsWith("\"") && rawSession.length() > 2) {
@@ -117,7 +119,8 @@ public class NameChanger extends TimerTask {
                     webResponse.getStatusCode(),
                     endTime - this.main.getDate(),
                     webEndTime == -1 ? 0 : webEndTime - this.main.getDate(),
-                    this.proxy
+                    this.proxy,
+                    this.proxyOffset
             ));
 
             if (response.contains("Name changed")) {
@@ -131,7 +134,8 @@ public class NameChanger extends TimerTask {
                     0,
                     endTime - this.main.getDate(),
                     0,
-                    this.proxy
+                    this.proxy,
+                    this.proxyOffset
             ));
         } finally {
             if (client != null) {

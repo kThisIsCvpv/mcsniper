@@ -21,13 +21,15 @@ public class GiftChanger extends TimerTask {
     private String session;
     private String code;
     private String authToken;
+    private long proxyOffset;
 
-    public GiftChanger(GiftSniper main, Proxy proxy, String name, String session, String code) {
+    public GiftChanger(GiftSniper main, Proxy proxy, String name, String session, String code, long proxyOffset) {
         this.main = main;
         this.proxy = proxy;
         this.name = name;
         this.session = session;
         this.code = code;
+        this.proxyOffset = proxyOffset;
 
         String rawSession = this.session;
         if (rawSession.startsWith("\"") && rawSession.endsWith("\"") && rawSession.length() > 2) {
@@ -118,7 +120,8 @@ public class GiftChanger extends TimerTask {
                     webResponse.getStatusCode(),
                     endTime - this.main.getDate(),
                     webEndTime == -1 ? 0 : webEndTime - this.main.getDate(),
-                    this.proxy
+                    this.proxy,
+                    this.proxyOffset
             ));
 
             if (response.contains("Profile created.")) {
@@ -132,7 +135,8 @@ public class GiftChanger extends TimerTask {
                     0,
                     endTime - this.main.getDate(),
                     0,
-                    this.proxy
+                    this.proxy,
+                    this.proxyOffset
             ));
         } finally {
             if (client != null) {

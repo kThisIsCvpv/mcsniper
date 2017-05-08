@@ -19,13 +19,14 @@ public class GiftSniper extends AbstractSniper {
     }
 
     @Override
-    protected TimerTask createNameChanger(AbstractSniper sniper, Proxy proxy, String name) {
+    protected TimerTask createNameChanger(AbstractSniper sniper, Proxy proxy, String name, long proxyOffset) {
         return new GiftChanger(
                 this,
                 proxy,
                 name,
                 this.sessionCookie,
-                this.giftcode
+                this.giftcode,
+                proxyOffset
         );
     }
 

@@ -1,6 +1,7 @@
 package co.mcsniper.mcsniper.sniper;
 
 import co.mcsniper.mcsniper.MCSniper;
+import co.mcsniper.mcsniper.util.TimeVerify;
 
 import java.net.Proxy;
 import java.util.Date;
@@ -97,6 +98,9 @@ public abstract class AbstractSniper implements Runnable {
         int count = 0;
         long systemTimeOffset = System.currentTimeMillis() - this.getHandler().getWorldTime().currentTimeMillis();
 
+        Date timeVerify = new Date(this.getDate() + systemTimeOffset);
+        (new Timer()).schedule(new TimeVerify(), timeVerify);
+
         for (int server = 0; server < this.proxyCount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
                 long snipingOffset;
@@ -107,7 +111,7 @@ public abstract class AbstractSniper implements Runnable {
                 }
 
                 Date date = new Date(clickTime + snipingOffset + systemTimeOffset);
-                (new Timer()).schedule(this.createNameChanger(this, this.getProxies()[server], this.getName()), date);
+                (new Timer()).schedule(this.createNameChanger(this, this.getProxies()[server], this.getName(), snipingOffset), date);
 
                 count++;
             }
@@ -138,6 +142,6 @@ public abstract class AbstractSniper implements Runnable {
         this.handler.getMySQL().updateStatus(this.getSnipeId(), 1);
     }
 
-    protected abstract TimerTask createNameChanger(AbstractSniper sniper, Proxy proxy, String name);
+    protected abstract TimerTask createNameChanger(AbstractSniper sniper, Proxy proxy, String name, long proxyOffset);
 
 }

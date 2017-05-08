@@ -8,14 +8,16 @@ public class Response {
     private int statusCode;
     private long offset;
     private long webOffset;
+    private long proxyOffset;
     private Proxy proxy;
 
-    public Response(String response, int statusCode, long offset, long webOffset, Proxy proxy) {
+    public Response(String response, int statusCode, long offset, long webOffset, Proxy proxy, long proxyOffset) {
         this.response = formatResponse(response);
         this.statusCode = statusCode;
         this.offset = offset;
         this.webOffset = webOffset;
         this.proxy = proxy;
+        this.proxyOffset = proxyOffset;
     }
 
     public String getResponse() {
@@ -36,6 +38,10 @@ public class Response {
 
     public Proxy getProxy() {
         return this.proxy;
+    }
+
+    public long getProxyOffset() {
+        return this.proxyOffset;
     }
 
     public static String formatResponse(String response) {

@@ -21,14 +21,15 @@ public class NameSniper extends AbstractSniper {
     }
 
     @Override
-    protected TimerTask createNameChanger(AbstractSniper sniper, Proxy proxy, String name) {
+    protected TimerTask createNameChanger(AbstractSniper sniper, Proxy proxy, String name, long proxyOffset) {
         return new NameChanger(
                 this,
                 this.uuid,
                 proxy,
                 name,
                 this.sessionCookie,
-                this.password
+                this.password,
+                proxyOffset
         );
     }
 
