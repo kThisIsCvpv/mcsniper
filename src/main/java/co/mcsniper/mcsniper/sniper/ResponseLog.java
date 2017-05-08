@@ -56,7 +56,11 @@ public class ResponseLog {
 
         Collections.sort(validResponses, new Comparator<Response>() {
             public int compare(Response o1, Response o2) {
-                return Long.compare(o1.getOffset(), o2.getOffset());
+                if (o1.getWebOffset() == o2.getWebOffset()) {
+                    return Long.compare(o1.getOffset(), o2.getOffset());
+                } else {
+                    return Long.compare(o1.getWebOffset(), o2.getWebOffset());
+                }
             }
         });
 
