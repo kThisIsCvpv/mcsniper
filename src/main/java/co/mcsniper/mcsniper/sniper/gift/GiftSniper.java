@@ -12,7 +12,7 @@ public class GiftSniper extends AbstractSniper {
     private String giftcode;
 
     public GiftSniper(MCSniper handler, int snipeId, long snipeDate, String name, String sessionCookie, String giftcode, int proxyCount, int proxyInstances, long proxyOffset) {
-        super(handler, name, snipeId, proxyCount, proxyInstances, proxyOffset, snipeDate);
+        super(handler, name, snipeId, proxyCount, proxyInstances, proxyOffset, snipeDate, false);
 
         this.sessionCookie = sessionCookie;
         this.giftcode = giftcode;

@@ -13,7 +13,7 @@ public class NameSniper extends AbstractSniper {
     private String password;
 
     public NameSniper(MCSniper handler, int snipeId, long snipeDate, String name, String uuid, String sessionCookie, String password, int proxyCount, int proxyInstances, long proxyOffset) {
-        super(handler, name, snipeId, proxyCount, proxyInstances, proxyOffset, snipeDate);
+        super(handler, name, snipeId, proxyCount, proxyInstances, proxyOffset, snipeDate, true);
 
         this.uuid = uuid;
         this.sessionCookie = sessionCookie;

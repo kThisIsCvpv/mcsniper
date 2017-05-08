@@ -14,7 +14,6 @@ public abstract class AbstractSniper implements Runnable {
      * The offset for each sequential request
      */
     private static double K_OFFSET = 1.00;
-    private static boolean USE_FUNCTION = false;
 
     private String name;
     private int snipeId;
@@ -23,13 +22,14 @@ public abstract class AbstractSniper implements Runnable {
     private long proxyOffset;
     private long date;
     private boolean done;
+    private boolean useFunction;
 
     private MCSniper handler;
     private Proxy[] proxies;
     private ResponseLog log;
     private Thread drone;
 
-    public AbstractSniper(MCSniper handler, String name, int snipeId, int proxyCount, int proxyInstances, long proxyOffset, long date) {
+    public AbstractSniper(MCSniper handler, String name, int snipeId, int proxyCount, int proxyInstances, long proxyOffset, long date, boolean useFunction) {
         this.handler = handler;
         this.name = name;
         this.snipeId = snipeId;
@@ -38,6 +38,7 @@ public abstract class AbstractSniper implements Runnable {
         this.proxyOffset = proxyOffset;
         this.date = date;
         this.done = false;
+        this.useFunction = useFunction;
     }
 
     public String getName() {
@@ -99,7 +100,7 @@ public abstract class AbstractSniper implements Runnable {
         for (int server = 0; server < this.proxyCount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
                 long snipingOffset;
-                if (USE_FUNCTION) {
+                if (this.useFunction) {
                     snipingOffset = -(long) Math.sqrt((0.065 * count) + 55);
                 } else {
                     snipingOffset = (count % 2 == 0 ? 1 : -1) * ((long) (K_OFFSET * Math.ceil(count / 2D))) + this.proxyOffset;
