@@ -133,7 +133,7 @@ public class NameChanger extends TimerTask {
                     ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""),
                     0,
                     endTime - this.main.getDate(),
-                    0,
+                    99999,
                     this.proxy,
                     this.proxyOffset
             ));
