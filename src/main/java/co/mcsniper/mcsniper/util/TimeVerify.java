@@ -9,7 +9,7 @@ public class TimeVerify extends TimerTask {
     @Override
     public void run() {
         try {
-            new SimpleHttpRequest("https://mcsniper.co/util/timeverify")
+            new SimpleHttpRequest("https://lyph.io/mcsniper/timingsverify")
                     .execute();
         } catch (Exception e) {
             e.printStackTrace();

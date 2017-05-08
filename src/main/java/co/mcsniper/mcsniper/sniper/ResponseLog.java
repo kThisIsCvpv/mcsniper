@@ -47,7 +47,7 @@ public class ResponseLog {
         sb.append("Snipe Result: ").append(this.isSuccess() ? "Success" : "Fail").append("\n");
         sb.append("Proxy Count: ").append(this.sniper.getProxyCount()).append("\n");
         sb.append("Proxy Instances: ").append(this.sniper.getProxyInstances()).append("\n");
-        sb.append("Proxy Offset: ").append(this.sniper.getProxyOffset()).append("\n");
+        sb.append("Proxy Offset: ").append(this.sniper.isUseFunction() ? "Function-Generated" : this.sniper.getProxyOffset()).append("\n");
 
         List<Response> validResponses = new ArrayList<Response>(this.responses.size());
 

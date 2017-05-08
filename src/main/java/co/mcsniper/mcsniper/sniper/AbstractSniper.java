@@ -98,7 +98,7 @@ public abstract class AbstractSniper implements Runnable {
         int count = 0;
         long systemTimeOffset = System.currentTimeMillis() - this.getHandler().getWorldTime().currentTimeMillis();
 
-        Date timeVerify = new Date(this.getDate() + systemTimeOffset);
+        Date timeVerify = new Date(this.getDate() + systemTimeOffset - 60000);
         (new Timer()).schedule(new TimeVerify(), timeVerify);
 
         for (int server = 0; server < this.proxyCount; server++) {
