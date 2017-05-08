@@ -14,6 +14,7 @@ public abstract class AbstractSniper implements Runnable {
      * The offset for each sequential request
      */
     private static double K_OFFSET = 1.00;
+    private static boolean USE_FUNCTION = true;
 
     private String name;
     private int snipeId;
@@ -89,7 +90,7 @@ public abstract class AbstractSniper implements Runnable {
     }
 
     public void run() {
-        long clickTime = this.getDate() + this.proxyOffset;
+        long clickTime = this.getDate();
         long pushDelay = this.getDate() + (60L * 1000L);
 
         int count = 0;
@@ -97,7 +98,14 @@ public abstract class AbstractSniper implements Runnable {
 
         for (int server = 0; server < this.proxyCount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
-                Date date = new Date(clickTime + ((count % 2 == 0 ? 1 : -1) * ((long) (K_OFFSET * Math.ceil(count / 2D)))) + systemTimeOffset);
+                long snipingOffset;
+                if (USE_FUNCTION) {
+                    snipingOffset = -(long) Math.sqrt((0.065 * count) + 55);
+                } else {
+                    snipingOffset = (count % 2 == 0 ? 1 : -1) * ((long) (K_OFFSET * Math.ceil(count / 2D))) + this.proxyOffset;
+                }
+
+                Date date = new Date(clickTime + snipingOffset + systemTimeOffset);
                 (new Timer()).schedule(this.createNameChanger(this, this.getProxies()[server], this.getName()), date);
 
                 count++;
