@@ -78,6 +78,7 @@ public class ResponseLog {
 
         for (Response response : validResponses) {
             sb.append(StringUtils.rightPad(response.getProxy().toString(), 30, " "));
+            sb.append("[ ").append(StringUtils.rightPad(timeFormat.format(response.getProxyOffset()), 5)).append(" ] ");
             sb.append("[ ").append(StringUtils.rightPad(timeFormat.format(response.getOffset()), 9)).append(" ] [ ");
             sb.append(StringUtils.rightPad(timeFormat.format(response.getWebOffset()), 9)).append(" ] ");
             sb.append("( HTTP ").append(response.getStatusCode()).append(" ) ");

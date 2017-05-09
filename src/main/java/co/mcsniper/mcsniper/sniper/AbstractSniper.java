@@ -105,7 +105,7 @@ public abstract class AbstractSniper implements Runnable {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
                 long snipingOffset;
                 if (this.useFunction) {
-                    snipingOffset = -(long) (Math.sqrt((0.065 * count) + 55) * 1000);
+                    snipingOffset = -(long) (Math.sqrt((0.055 * count) + 20) * 1000);
                 } else {
                     snipingOffset = (count % 2 == 0 ? 1 : -1) * ((long) (K_OFFSET * Math.ceil(count / 2D))) + this.proxyOffset;
                 }
