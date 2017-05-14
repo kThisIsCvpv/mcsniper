@@ -7,12 +7,14 @@ public class ServerInfo {
     private int snipeProxies;
     private int snipeInstances;
     private int snipeOffset;
+    private int functionOffset;
 
-    public ServerInfo(String serverName, int snipeProxies, int snipeInstances, int snipeOffset) {
+    public ServerInfo(String serverName, int snipeProxies, int snipeInstances, int snipeOffset, int functionOffset) {
         this.serverName = serverName;
         this.snipeProxies = snipeProxies;
         this.snipeInstances = snipeInstances;
         this.snipeOffset = snipeOffset;
+        this.functionOffset = functionOffset;
     }
 
     public String getServerName() {
@@ -29,6 +31,10 @@ public class ServerInfo {
 
     public int getProxyOffset() {
         return this.snipeOffset;
+    }
+
+    public int getFunctionOffset() {
+        return this.functionOffset;
     }
 
     @Override

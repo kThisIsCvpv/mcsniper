@@ -11,8 +11,8 @@ public class GiftSniper extends AbstractSniper {
     private String sessionCookie;
     private String giftcode;
 
-    public GiftSniper(MCSniper handler, int snipeId, long snipeDate, String name, String sessionCookie, String giftcode, int proxyCount, int proxyInstances, long proxyOffset) {
-        super(handler, name, snipeId, proxyCount, proxyInstances, proxyOffset, snipeDate, false);
+    public GiftSniper(MCSniper handler, int snipeId, long snipeDate, String name, String sessionCookie, String giftcode, int proxyCount, int proxyInstances, int proxyOffset, int functionOffset) {
+        super(handler, name, snipeId, proxyCount, proxyInstances, proxyOffset, functionOffset, snipeDate, false);
 
         this.sessionCookie = sessionCookie;
         this.giftcode = giftcode;

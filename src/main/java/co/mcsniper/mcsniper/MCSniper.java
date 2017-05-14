@@ -140,7 +140,7 @@ public class MCSniper {
 
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject obj = new JSONObject(array.get(i).toString());
-                        servers.put(obj.getString("name"), new ServerInfo(obj.getString("name"), obj.getInt("snipe_proxies"), obj.getInt("snipe_instances"), obj.getInt("snipe_offset")));
+                        servers.put(obj.getString("name"), new ServerInfo(obj.getString("name"), obj.getInt("snipe_proxies"), obj.getInt("snipe_instances"), obj.getInt("snipe_offset"), obj.getInt("function_offset")));
                     }
 
                     if (servers.containsKey(this.serverName)) {

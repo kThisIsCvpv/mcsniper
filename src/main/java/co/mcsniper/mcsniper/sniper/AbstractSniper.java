@@ -20,7 +20,8 @@ public abstract class AbstractSniper implements Runnable {
     private int snipeId;
     private int proxyCount;
     private int proxyInstances;
-    private long proxyOffset;
+    private int proxyOffset;
+    private int functionOffset;
     private long date;
     private boolean done;
     private boolean useFunction;
@@ -30,13 +31,14 @@ public abstract class AbstractSniper implements Runnable {
     private ResponseLog log;
     private Thread drone;
 
-    public AbstractSniper(MCSniper handler, String name, int snipeId, int proxyCount, int proxyInstances, long proxyOffset, long date, boolean useFunction) {
+    public AbstractSniper(MCSniper handler, String name, int snipeId, int proxyCount, int proxyInstances, int proxyOffset, int functionOffset, long date, boolean useFunction) {
         this.handler = handler;
         this.name = name;
         this.snipeId = snipeId;
         this.proxyCount = proxyCount;
         this.proxyInstances = proxyInstances;
         this.proxyOffset = proxyOffset;
+        this.functionOffset = functionOffset;
         this.date = date;
         this.done = false;
         this.useFunction = useFunction;
@@ -106,7 +108,7 @@ public abstract class AbstractSniper implements Runnable {
                 long snipingOffset;
                 if (this.useFunction) {
                     // snipingOffset = -(long) (Math.sqrt((0.055 * count) + 20) * 1000); 5/13/2017 Outdated: Invalids mostly at -8000 with some -11/-12k's
-                    snipingOffset = -(long) (1000 * (9 * Math.sin(0.0007 * count + 6.5) + 2.5));
+                    snipingOffset = (-(long) (1000 * (9 * Math.sin(0.0007 * count + 6.5) + 2.5))) + this.functionOffset;
                 } else {
                     snipingOffset = (count % 2 == 0 ? 1 : -1) * ((long) (K_OFFSET * Math.ceil(count / 2D))) + this.proxyOffset;
                 }
