@@ -146,9 +146,9 @@ public class MCSniper {
                     if (servers.containsKey(this.serverName)) {
                         ServerInfo si = servers.get(this.serverName);
                         if (isGiftCode) {
-                            updatedSnipes.put(snipeID, new GiftSniper(this, snipeID, unixDate, nameToSnipe, session, uuid, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset()));
+                            updatedSnipes.put(snipeID, new GiftSniper(this, snipeID, unixDate, nameToSnipe, session, uuid, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset(), si.getFunctionOffset()));
                         } else {
-                            updatedSnipes.put(snipeID, new NameSniper(this, snipeID, unixDate, nameToSnipe, uuid, session, password, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset()));
+                            updatedSnipes.put(snipeID, new NameSniper(this, snipeID, unixDate, nameToSnipe, uuid, session, password, si.getProxyAmount(), si.getProxyInstances(), si.getProxyOffset(), si.getFunctionOffset()));
                         }
                     }
 
