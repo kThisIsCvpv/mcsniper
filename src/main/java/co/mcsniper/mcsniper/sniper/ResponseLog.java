@@ -76,7 +76,7 @@ public class ResponseLog {
                 .put("instances", this.sniper.getProxyInstances())
                 .put("offset", this.sniper.isUseFunction() ? 0 : this.sniper.getProxyOffset());
 
-        sb.append("Proxy                         Proxy Offset  Response Date Server Date   HTTP Code    Response\n\n");
+        sb.append("Proxy                         Proxy Offset   Response Date Server Date   HTTP Code    Response\n\n");
         for (Response response : validResponses) {
             sb.append(StringUtils.rightPad(response.getProxy().toString(), 30, " "));
             sb.append("[ @").append(StringUtils.rightPad(timeFormat.format(response.getProxyOffset()), 9)).append(" ] ");
