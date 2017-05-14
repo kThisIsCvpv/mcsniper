@@ -106,7 +106,7 @@ public abstract class AbstractSniper implements Runnable {
                 long snipingOffset;
                 if (this.useFunction) {
                     // snipingOffset = -(long) (Math.sqrt((0.055 * count) + 20) * 1000); 5/13/2017 Outdated: Invalids mostly at -8000 with some -11/-12k's
-                    snipingOffset = -(long) (9.0 * Math.sin(0.0007 * count + 6.5));
+                    snipingOffset = -(long) (1000 * (9 * Math.sin(0.0007 * count + 6.5) + 2.5));
                 } else {
                     snipingOffset = (count % 2 == 0 ? 1 : -1) * ((long) (K_OFFSET * Math.ceil(count / 2D))) + this.proxyOffset;
                 }
