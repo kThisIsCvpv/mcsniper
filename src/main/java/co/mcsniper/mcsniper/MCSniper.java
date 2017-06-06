@@ -17,6 +17,8 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import co.mcsniper.mcsniper.sniper.AbstractSniper;
+import co.mcsniper.mcsniper.util.*;
+import co.mcsniper.mcsniper.util.SecurityManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,11 +26,6 @@ import co.mcsniper.mysql.MySQLConnection;
 import co.mcsniper.mysql.MySQLCredentials;
 import co.mcsniper.mysql.ServerInfo;
 import co.mcsniper.mcsniper.proxy.ProxyHandler;
-import co.mcsniper.mcsniper.util.RestartManager;
-import co.mcsniper.mcsniper.util.SecurityManager;
-import co.mcsniper.mcsniper.util.Updater;
-import co.mcsniper.mcsniper.util.Util;
-import co.mcsniper.mcsniper.util.WorldTime;
 import co.mcsniper.mcsniper.sniper.gift.GiftSniper;
 import co.mcsniper.mcsniper.sniper.name.NameSniper;
 
@@ -104,6 +101,8 @@ public class MCSniper {
 
         this.restartManager = new RestartManager(this);
         this.restartManager.updateStatus();
+
+        Hardware.updateHardware(this);
 
         System.out.println("#######################################");
         System.out.println("Server Name: " + this.serverName);
