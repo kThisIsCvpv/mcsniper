@@ -16,7 +16,7 @@ public class Hardware {
         try {
             PreparedStatement ps = sniper.getMySQL().createConnection().prepareStatement("INSERT INTO hardware " +
                     "(server, cpu_model, cpu_threads, total_memory, free_memory, load_1m, load_5m, load_15m) " +
-                    "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE cpu_model = ?, cpu_threads = ?, total_memory = ?," +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE cpu_model = ?, cpu_threads = ?, total_memory = ?," +
                     "free_memory = ?, load_1m = ?, load_5m = ?, load_15m = ?");
             ps.setString(1, sniper.getServerName());
             ps.setString(2, cpu.getModel());
