@@ -35,7 +35,7 @@ public class Hardware {
         String model = "Unknown";
 
         for (String line : cpuInfo) {
-            line = line.trim().replaceAll(" +", "");
+            line = line.trim().replaceAll("\\s+", " ");
 
             if (line.startsWith("processor :")) {
                 threadCount++;
@@ -55,7 +55,7 @@ public class Hardware {
         double totalMemory = 0;
 
         for (String line : memInfo) {
-            line = line.trim().replaceAll(" +", "");
+            line = line.trim().replaceAll("\\s+", " ");
 
             if (line.startsWith("MemTotal: ")) {
                 try {
