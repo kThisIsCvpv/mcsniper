@@ -14,10 +14,16 @@ public class Hardware {
         double[] load = getLoad();
 
         try {
-            PreparedStatement ps = sniper.getMySQL().createConnection().prepareStatement("INSERT INTO hardware " +
-                    "(server, cpu_model, cpu_threads, total_memory, free_memory, load_1m, load_5m, load_15m) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE cpu_model = ?, cpu_threads = ?, total_memory = ?," +
-                    "free_memory = ?, load_1m = ?, load_5m = ?, load_15m = ?");
+            PreparedStatement ps = sniper.getMySQL().createConnection().prepareStatement("INSERT INTO hardware (server, cpu_model, cpu_threads, total_memory, free_memory, load_1m, load_5m, load_15m)" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)" +
+                    "ON DUPLICATE KEY UPDATE" +
+                    "    cpu_model = VALUES(cpu_model)," +
+                    "    cpu_threads = VALUES(cpu_threads)," +
+                    "    total_memory = VALUES(total_memory)," +
+                    "    free_memory = VALUES(free_memory)," +
+                    "    load_1m = VALUES(load_1m)," +
+                    "    load_5m = VALUES(load_5m)," +
+                    "    load_15m = VALUES(load_15m)");
             ps.setString(1, sniper.getServerName());
             ps.setString(2, cpu.getModel());
             ps.setInt(3, cpu.getThreadCount());
@@ -26,13 +32,6 @@ public class Hardware {
             ps.setDouble(6, load[0]);
             ps.setDouble(7, load[1]);
             ps.setDouble(8, load[2]);
-            ps.setString(9, cpu.getModel());
-            ps.setInt(10, cpu.getThreadCount());
-            ps.setDouble(11, memory[0]);
-            ps.setDouble(12, memory[1]);
-            ps.setDouble(13, load[0]);
-            ps.setDouble(14, load[1]);
-            ps.setDouble(15, load[2]);
             ps.execute();
             ps.close();
         } catch (Exception e) {
