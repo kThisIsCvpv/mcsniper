@@ -102,8 +102,6 @@ public class MCSniper {
         this.restartManager = new RestartManager(this);
         this.restartManager.updateStatus();
 
-        Hardware.updateHardware(this);
-
         System.out.println("#######################################");
         System.out.println("Server Name: " + this.serverName);
         System.out.println("Server IP: " + this.serverIP);
@@ -112,6 +110,8 @@ public class MCSniper {
         System.out.println("#######################################");
 
         while (true) {
+            Hardware.updateHardware(this);
+
             Map<Integer, AbstractSniper> updatedSnipes = new HashMap<>();
             Connection con = null;
 
