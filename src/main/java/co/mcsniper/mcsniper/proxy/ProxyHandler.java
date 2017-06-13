@@ -47,25 +47,6 @@ public class ProxyHandler {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		// try {
-		// Connection connection = sniper.getMySQL().createConnection();
-		//
-		// PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM proxies WHERE node = ? AND enabled = 1");
-		// preparedStatement.setString(1, sniper.getServerName());
-		// preparedStatement.setFetchSize(100);
-		// ResultSet resultSet = preparedStatement.executeQuery();
-		//
-		// while (resultSet.next()) {
-		// this.availableProxies.add(new Proxy(Proxy.Type.valueOf(resultSet.getString("type")), new InetSocketAddress(resultSet.getString("ip"), resultSet.getInt("port"))));
-		// }
-		//
-		// resultSet.close();
-		// preparedStatement.close();
-		// connection.close();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
 	}
 
 	private List<Proxy> listProxies(String url) {
@@ -107,6 +88,10 @@ public class ProxyHandler {
 	}
 
 	private Proxy getNextProxy() {
+		if (this.availableProxies.size() == 0) {
+			return new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8081));
+		}
+
 		Proxy returnProxy = this.availableProxies.get(this.currentProxy);
 
 		this.currentProxy++;
