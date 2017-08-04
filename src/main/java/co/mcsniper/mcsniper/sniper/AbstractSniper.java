@@ -1,9 +1,8 @@
 package co.mcsniper.mcsniper.sniper;
 
 import co.mcsniper.mcsniper.MCSniper;
-import co.mcsniper.mcsniper.util.TimeVerify;
+import co.mcsniper.mcsniper.proxy.SniperProxy;
 
-import java.net.Proxy;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -27,7 +26,7 @@ public abstract class AbstractSniper implements Runnable {
     private boolean useFunction;
 
     private MCSniper handler;
-    private Proxy[] proxies;
+    private SniperProxy[] proxies;
     private ResponseLog log;
     private Thread drone;
 
@@ -68,7 +67,7 @@ public abstract class AbstractSniper implements Runnable {
         return this.date;
     }
 
-    public Proxy[] getProxies() {
+    public SniperProxy[] getProxies() {
         return this.proxies;
     }
 
@@ -81,10 +80,10 @@ public abstract class AbstractSniper implements Runnable {
     }
 
     public void start() {
-        this.proxies = new Proxy[this.proxyCount];
+        this.proxies = new SniperProxy[this.proxyCount];
         this.log = new ResponseLog(handler, this);
 
-        List<Proxy> allocatedProxies = this.handler.getProxyHandler().getProxies(this.proxyCount);
+        List<SniperProxy> allocatedProxies = this.handler.getProxyHandler().getProxies(this.proxyCount);
         for (int i = 0; i < this.proxies.length; i++) {
             this.proxies[i] = allocatedProxies.get(i);
         }
@@ -99,9 +98,6 @@ public abstract class AbstractSniper implements Runnable {
 
         int count = 0;
         long systemTimeOffset = System.currentTimeMillis() - this.getHandler().getWorldTime().currentTimeMillis();
-
-        Date timeVerify = new Date(this.getDate() + systemTimeOffset - 60000);
-        (new Timer()).schedule(new TimeVerify(), timeVerify);
 
         for (int server = 0; server < this.proxyCount; server++) {
             for (int instance = 0; instance < this.proxyInstances; instance++) {
@@ -145,6 +141,6 @@ public abstract class AbstractSniper implements Runnable {
         this.handler.getMySQL().updateStatus(this.getSnipeId(), 1);
     }
 
-    protected abstract TimerTask createNameChanger(AbstractSniper sniper, Proxy proxy, String name, long proxyOffset);
+    protected abstract TimerTask createNameChanger(AbstractSniper sniper, SniperProxy proxy, String name, long proxyOffset);
 
 }

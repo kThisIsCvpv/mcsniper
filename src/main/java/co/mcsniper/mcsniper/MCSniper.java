@@ -18,7 +18,6 @@ import java.util.jar.Manifest;
 
 import co.mcsniper.mcsniper.sniper.AbstractSniper;
 import co.mcsniper.mcsniper.util.*;
-import co.mcsniper.mcsniper.util.SecurityManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -48,7 +47,6 @@ public class MCSniper {
     private WorldTime worldTime;
     private ProxyHandler proxyHandler;
     private RestartManager restartManager;
-    private SecurityManager securityManager;
 
     private MySQLCredentials mysqlCredentials;
     private MySQLConnection mysqlConnection;
@@ -95,7 +93,6 @@ public class MCSniper {
 
         this.proxyHandler = new ProxyHandler(this);
         this.proxyHandler.shuffle();
-        this.securityManager = new SecurityManager(this.proxyHandler);
 
         long serverOffset = this.worldTime.currentTimeMillis() - System.currentTimeMillis();
 

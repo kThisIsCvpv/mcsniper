@@ -1,8 +1,6 @@
 package co.mcsniper.mcsniper.proxy;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +15,7 @@ import co.mcsniper.mcsniper.MCSniper;
 
 public class ProxyHandler {
 
-	private List<Proxy> availableProxies = new ArrayList<>();
+	private List<SniperProxy> availableProxies = new ArrayList<>();
 	private int currentProxy = 0;
 
 	public ProxyHandler(MCSniper sniper) throws IOException {
@@ -49,20 +47,32 @@ public class ProxyHandler {
 		}
 	}
 
-	private List<Proxy> listProxies(String url) {
+	private List<SniperProxy> listProxies(String url) {
 		WebClient client = new WebClient();
-		List<Proxy> proxies = new ArrayList<Proxy>();
+		List<SniperProxy> proxies = new ArrayList<SniperProxy>();
 
 		try {
 			Page page = client.getPage(url);
 			String[] dataList = page.getWebResponse().getContentAsString().split("\n");
 
 			for (String data : dataList) {
-				String parsed = data.trim();
-				if (parsed.contains(":")) {
-					String ip = parsed.split(":")[0];
-					int port = Integer.parseInt(parsed.split(":")[1]);
-					proxies.add(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port)));
+				data = data.trim();
+				if (data.contains(":")) {
+					String username = null;
+					String password = null;
+
+					if (data.contains("@")) {
+						String[] proxyParts = data.split("@");
+						String[] authData = proxyParts[0].split(":");
+						username = authData[0];
+						password = authData[1];
+
+						data = proxyParts[1];
+					}
+
+					String[] proxyData = data.split(":");
+
+					proxies.add(new SniperProxy(proxyData[0], Integer.parseInt(proxyData[1]), username, password));
 				}
 			}
 		} catch (Exception ex) {
@@ -74,12 +84,12 @@ public class ProxyHandler {
 		return proxies;
 	}
 
-	public List<Proxy> getAllProxies() {
+	public List<SniperProxy> getAllProxies() {
 		return this.availableProxies;
 	}
 
-	public List<Proxy> getProxies(int amount) {
-		List<Proxy> returnList = new ArrayList<>();
+	public List<SniperProxy> getProxies(int amount) {
+		List<SniperProxy> returnList = new ArrayList<>();
 		for (int i = 0; i < amount; i++) {
 			returnList.add(getNextProxy());
 		}
@@ -87,12 +97,12 @@ public class ProxyHandler {
 		return returnList;
 	}
 
-	private Proxy getNextProxy() {
+	private SniperProxy getNextProxy() {
 		if (this.availableProxies.size() == 0) {
-			return new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8081));
+			return null;
 		}
 
-		Proxy returnProxy = this.availableProxies.get(this.currentProxy);
+		SniperProxy returnProxy = this.availableProxies.get(this.currentProxy);
 
 		this.currentProxy++;
 		if (this.currentProxy >= this.availableProxies.size()) {

@@ -1,11 +1,11 @@
 package co.mcsniper.mcsniper.sniper.name;
 
-import java.net.Proxy;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import co.mcsniper.mcsniper.proxy.SniperProxy;
 import co.mcsniper.mcsniper.sniper.Response;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
@@ -14,7 +14,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 public class NameChanger extends TimerTask {
 
     private NameSniper main;
-    private Proxy proxy;
+    private SniperProxy proxy;
 
     private String uuid;
     private String name;
@@ -23,7 +23,7 @@ public class NameChanger extends TimerTask {
     private String authToken;
     private long proxyOffset;
 
-    public NameChanger(NameSniper main, String uuid, Proxy proxy, String name, String session, String password, long proxyOffset) {
+    public NameChanger(NameSniper main, String uuid, SniperProxy proxy, String name, String session, String password, long proxyOffset) {
         this.main = main;
         this.uuid = uuid;
         this.proxy = proxy;
@@ -82,11 +82,13 @@ public class NameChanger extends TimerTask {
             request.getRequestParameters().add(new NameValuePair("newName", this.name));
             request.getRequestParameters().add(new NameValuePair("password", this.password));
 
-            String fullAddress = this.proxy.toString().split("/")[1];
-            String proxyAddress = fullAddress.split(":")[0];
-            int proxyPort = Integer.parseInt(fullAddress.split(":")[1]);
+            client = new WebClient(BrowserVersion.CHROME, this.proxy.getIp(), this.proxy.getPort());
 
-            client = new WebClient(BrowserVersion.CHROME, proxyAddress, proxyPort);
+            if (this.proxy.getUsername() != null && this.proxy.getPassword() != null) {
+                DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider) client.getCredentialsProvider();
+                credentialsProvider.addCredentials(this.proxy.getUsername(), this.proxy.getPassword());
+            }
+
             client.getOptions().setJavaScriptEnabled(false);
             client.getOptions().setCssEnabled(false);
             client.getOptions().setThrowExceptionOnFailingStatusCode(false);

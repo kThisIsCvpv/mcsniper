@@ -1,8 +1,8 @@
 package co.mcsniper.mcsniper.sniper.name;
 
-import java.net.Proxy;
 import java.util.*;
 
+import co.mcsniper.mcsniper.proxy.SniperProxy;
 import co.mcsniper.mcsniper.sniper.AbstractSniper;
 import co.mcsniper.mcsniper.MCSniper;
 
@@ -21,7 +21,7 @@ public class NameSniper extends AbstractSniper {
     }
 
     @Override
-    protected TimerTask createNameChanger(AbstractSniper sniper, Proxy proxy, String name, long proxyOffset) {
+    protected TimerTask createNameChanger(AbstractSniper sniper, SniperProxy proxy, String name, long proxyOffset) {
         return new NameChanger(
                 this,
                 this.uuid,

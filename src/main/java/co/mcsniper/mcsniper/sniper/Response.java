@@ -1,6 +1,6 @@
 package co.mcsniper.mcsniper.sniper;
 
-import java.net.Proxy;
+import co.mcsniper.mcsniper.proxy.SniperProxy;
 
 public class Response {
 
@@ -9,9 +9,9 @@ public class Response {
     private long offset;
     private long webOffset;
     private long proxyOffset;
-    private Proxy proxy;
+    private SniperProxy proxy;
 
-    public Response(String response, int statusCode, long offset, long webOffset, Proxy proxy, long proxyOffset) {
+    public Response(String response, int statusCode, long offset, long webOffset, SniperProxy proxy, long proxyOffset) {
         this.response = formatResponse(response);
         this.statusCode = statusCode;
         this.offset = offset;
@@ -36,7 +36,7 @@ public class Response {
         return this.webOffset;
     }
 
-    public Proxy getProxy() {
+    public SniperProxy getProxy() {
         return this.proxy;
     }
 

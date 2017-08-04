@@ -1,11 +1,11 @@
 package co.mcsniper.mcsniper.sniper.gift;
 
-import java.net.Proxy;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import co.mcsniper.mcsniper.proxy.SniperProxy;
 import co.mcsniper.mcsniper.sniper.Response;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
@@ -15,7 +15,7 @@ public class GiftChanger extends TimerTask {
 
     private GiftSniper main;
 
-    private Proxy proxy;
+    private SniperProxy proxy;
 
     private String name;
     private String session;
@@ -23,7 +23,7 @@ public class GiftChanger extends TimerTask {
     private String authToken;
     private long proxyOffset;
 
-    public GiftChanger(GiftSniper main, Proxy proxy, String name, String session, String code, long proxyOffset) {
+    public GiftChanger(GiftSniper main, SniperProxy proxy, String name, String session, String code, long proxyOffset) {
         this.main = main;
         this.proxy = proxy;
         this.name = name;
@@ -83,11 +83,13 @@ public class GiftChanger extends TimerTask {
             request.getRequestParameters().add(new NameValuePair("acceptTerms", "on"));
             request.getRequestParameters().add(new NameValuePair("code", this.code));
 
-            String fullAddress = this.proxy.toString().split("/")[1];
-            String proxyAddress = fullAddress.split(":")[0];
-            int proxyPort = Integer.parseInt(fullAddress.split(":")[1]);
+            client = new WebClient(BrowserVersion.CHROME, this.proxy.getIp(), this.proxy.getPort());
 
-            client = new WebClient(BrowserVersion.CHROME, proxyAddress, proxyPort);
+            if (this.proxy.getUsername() != null && this.proxy.getPassword() != null) {
+                DefaultCredentialsProvider credentialsProvider = (DefaultCredentialsProvider) client.getCredentialsProvider();
+                credentialsProvider.addCredentials(this.proxy.getUsername(), this.proxy.getPassword());
+            }
+
             client.getOptions().setJavaScriptEnabled(false);
             client.getOptions().setCssEnabled(false);
             client.getOptions().setThrowExceptionOnFailingStatusCode(false);
