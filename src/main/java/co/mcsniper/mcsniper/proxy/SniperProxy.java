@@ -35,16 +35,13 @@ public class SniperProxy {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        if (this.username != null && this.password != null) {
-            stringBuilder.append(this.username)
-                    .append(":")
-                    .append(this.password)
-                    .append("@");
-        }
-
         stringBuilder.append(this.ip)
                 .append(":")
                 .append(this.port);
+
+        if (this.username != null && this.password != null) {
+            stringBuilder.append(" [A]");
+        }
 
         return stringBuilder.toString();
     }
