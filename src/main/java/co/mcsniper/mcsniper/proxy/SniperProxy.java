@@ -8,11 +8,18 @@ public class SniperProxy {
     protected String username;
     protected String password;
 
+    protected boolean socks;
+
     public SniperProxy(String ip, int port, String username, String password) {
+        this(ip, port, username, password, false);
+    }
+
+    public SniperProxy(String ip, int port, String username, String password, boolean socks) {
         this.ip = ip;
         this.port = port;
         this.username = username;
         this.password = password;
+        this.socks = socks;
     }
 
     public String getIp() {
@@ -31,13 +38,15 @@ public class SniperProxy {
         return this.password;
     }
 
+    public boolean isSocks() {
+        return this.isSocks();
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(this.ip)
-                .append(":")
-                .append(this.port);
+        stringBuilder.append(this.ip).append(":").append(this.port);
 
         if (this.username != null && this.password != null) {
             stringBuilder.append(" [A]");

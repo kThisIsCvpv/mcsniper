@@ -1,5 +1,7 @@
 package co.mcsniper.mcsniper.sniper.gift;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,6 +12,9 @@ import co.mcsniper.mcsniper.sniper.Response;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.lyphiard.simplerequest.RequestType;
+import com.lyphiard.simplerequest.SimpleHttpRequest;
+import com.lyphiard.simplerequest.SimpleHttpResponse;
 
 public class GiftChanger extends TimerTask {
 
@@ -59,6 +64,45 @@ public class GiftChanger extends TimerTask {
     }
 
     public void run() {
+        if (this.proxy.isSocks()) {
+            this.runSOCKS();
+        } else {
+            this.runHTTP();
+        }
+    }
+
+    public void runSOCKS() {
+        try {            
+            Proxy socks = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(this.proxy.getIp(), this.proxy.getPort()));
+            SimpleHttpResponse response = new SimpleHttpRequest("https://account.mojang.com/redeem/createProfile")
+                    .setProxy(socks)
+                    .addField("authenticityToken", this.authToken)
+                    .addField("profileName", this.name)
+                    .addField("termsId", "231")
+                    .addField("acceptTerms", "on")
+                    .addField("code", this.code)
+                    .setType(RequestType.POST)
+                    .setTimeout(30000)
+                    .addHeader("Accept-Language", "en-US,en;q=0.8")
+                    .setCookie("PLAY_SESSION", this.session)
+                    .throwHttpErrors(false)
+                    .execute();
+            
+            long webEndTime = -1;
+            long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
+
+            this.main.getLog().addResponse(new Response(response.getResponse(), response.getResponseCode(), endTime - this.main.getDate(), webEndTime == -1 ? 0 : webEndTime - this.main.getDate(), this.proxy, this.proxyOffset));
+
+            if (response.getResponse().contains("Profile created.")) {
+                this.main.setSuccessful();
+            }
+        } catch (Exception ex) {
+            long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
+            this.main.getLog().addResponse(new Response(ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""), 0, endTime - this.main.getDate(), 99999, this.proxy, this.proxyOffset));
+        }
+    }
+
+    public void runHTTP() {
         WebClient client = null;
 
         try {
@@ -117,14 +161,7 @@ public class GiftChanger extends TimerTask {
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
-            this.main.getLog().addResponse(new Response(
-                    response,
-                    webResponse.getStatusCode(),
-                    endTime - this.main.getDate(),
-                    webEndTime == -1 ? 0 : webEndTime - this.main.getDate(),
-                    this.proxy,
-                    this.proxyOffset
-            ));
+            this.main.getLog().addResponse(new Response(response, webResponse.getStatusCode(), endTime - this.main.getDate(), webEndTime == -1 ? 0 : webEndTime - this.main.getDate(), this.proxy, this.proxyOffset));
 
             if (response.contains("Profile created.")) {
                 this.main.setSuccessful();
@@ -132,14 +169,7 @@ public class GiftChanger extends TimerTask {
         } catch (Exception ex) {
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
-            this.main.getLog().addResponse(new Response(
-                    ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""),
-                    0,
-                    endTime - this.main.getDate(),
-                    99999,
-                    this.proxy,
-                    this.proxyOffset
-            ));
+            this.main.getLog().addResponse(new Response(ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""), 0, endTime - this.main.getDate(), 99999, this.proxy, this.proxyOffset));
         } finally {
             if (client != null) {
                 try {

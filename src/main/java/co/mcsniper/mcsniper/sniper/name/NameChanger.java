@@ -1,15 +1,31 @@
 package co.mcsniper.mcsniper.sniper.name;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.TimerTask;
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.lyphiard.simplerequest.RequestType;
+import com.lyphiard.simplerequest.SimpleHttpRequest;
+import com.lyphiard.simplerequest.SimpleHttpResponse;
 
 import co.mcsniper.mcsniper.proxy.SniperProxy;
 import co.mcsniper.mcsniper.sniper.Response;
-import com.gargoylesoftware.htmlunit.*;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 public class NameChanger extends TimerTask {
 
@@ -60,6 +76,43 @@ public class NameChanger extends TimerTask {
     }
 
     public void run() {
+        if (this.proxy.isSocks()) {
+            this.runSOCKS();
+        } else {
+            this.runHTTP();
+        }
+    }
+
+    public void runSOCKS() {
+        try {
+            Proxy socks = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(this.proxy.getIp(), this.proxy.getPort()));
+            SimpleHttpResponse response = new SimpleHttpRequest("https://account.mojang.com/me/renameProfile/" + this.uuid)
+                    .setProxy(socks)
+                    .addField("authenticityToken", this.authToken)
+                    .addField("newName", this.name)
+                    .addField("password", this.password)
+                    .setType(RequestType.POST)
+                    .setTimeout(30000)
+                    .addHeader("Accept-Language", "en-US,en;q=0.8")
+                    .setCookie("PLAY_SESSION", this.session)
+                    .throwHttpErrors(false)
+                    .execute();
+            
+            long webEndTime = -1;
+            long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
+
+            this.main.getLog().addResponse(new Response(response.getResponse(), response.getResponseCode(), endTime - this.main.getDate(), webEndTime == -1 ? 0 : webEndTime - this.main.getDate(), this.proxy, this.proxyOffset));
+
+            if (response.getResponse().contains("Name changed")) {
+                this.main.setSuccessful();
+            }
+        } catch (Exception ex) {
+            long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
+            this.main.getLog().addResponse(new Response(ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""), 0, endTime - this.main.getDate(), 99999, this.proxy, this.proxyOffset));
+        }
+    }
+
+    public void runHTTP() {
         WebClient client = null;
 
         try {
@@ -116,14 +169,7 @@ public class NameChanger extends TimerTask {
 
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
-            this.main.getLog().addResponse(new Response(
-                    response,
-                    webResponse.getStatusCode(),
-                    endTime - this.main.getDate(),
-                    webEndTime == -1 ? 0 : webEndTime - this.main.getDate(),
-                    this.proxy,
-                    this.proxyOffset
-            ));
+            this.main.getLog().addResponse(new Response(response, webResponse.getStatusCode(), endTime - this.main.getDate(), webEndTime == -1 ? 0 : webEndTime - this.main.getDate(), this.proxy, this.proxyOffset));
 
             if (response.contains("Name changed")) {
                 this.main.setSuccessful();
@@ -131,14 +177,7 @@ public class NameChanger extends TimerTask {
         } catch (Exception ex) {
             long endTime = this.main.getHandler().getWorldTime().currentTimeMillis();
 
-            this.main.getLog().addResponse(new Response(
-                    ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""),
-                    0,
-                    endTime - this.main.getDate(),
-                    99999,
-                    this.proxy,
-                    this.proxyOffset
-            ));
+            this.main.getLog().addResponse(new Response(ex.getClass().getSimpleName() + (ex.getMessage() != null ? ": " + ex.getMessage() : ""), 0, endTime - this.main.getDate(), 99999, this.proxy, this.proxyOffset));
         } finally {
             if (client != null) {
                 try {
