@@ -39,7 +39,7 @@ public class SniperProxy {
     }
 
     public boolean isSocks() {
-        return this.isSocks();
+        return this.socks;
     }
 
     @Override
