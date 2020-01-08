@@ -19,7 +19,7 @@ This project was the fastest sniper on the market, beatting all competition cons
 
 This repository showcases our back-end mechanics.
 
-# Our Infrastructure
+# Infrastructure
 
 Sniping requires processing a huge amount of requests during a very short and small window. This means that a fast CPU and network connection is necessary. 
 
@@ -29,7 +29,7 @@ However, our project also featured a standalone executable that enabled us to ru
 
 Our web server and database was hosted on a DDOS protected [OVH Cloud Computing](https://www.ovh.com/ca/en/) VPS node.
 
-# The Process
+# Process
 
 ### Tackling Accuracy:
 Sniping requires high accuracy. This means that we are able to time our responses centered at the name's released time. Through testing, we noticed that there was an exposed epoch timestamp variable in one of Minecraft's API calls. Unfortunately, calling this endpoint was rate limited. We syncronized our web server's internal clock to their servers using this exposed variable. We then syncronized all our server's internal clocks with the web server, evading the rate limit. This provided us a high acccuracy internal clock on all our nodes. See **[WorldTime (...)](../src/main/java/co/mcsniper/mcsniper/util/WorldTime.java)**.
