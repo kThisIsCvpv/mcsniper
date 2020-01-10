@@ -1,3 +1,4 @@
+![alt text](https://www.kthisiscvpv.com/mxNMs1578632887WxKTz.png "Logo")
 # MCSniper Sniper v2.0.0 [![Build Status](https://travis-ci.com/Lyphiard/MCSniper.svg?token=Zg31zJNBhyU3bqeEVad1&branch=master)](https://travis-ci.com/Lyphiard/MCSniper) ##
 &copy; Copyright 2017 MCSniper.co All Rights Reserved
 
@@ -39,6 +40,8 @@ Sniping requires high precision. This means that our responses have low time spr
 
 ### Response Logging:
 As explained above, all our servers are tuned manually. We want to be able to log response attributes, then make any changes as necessary. See **[ResponseLog (...)](/src/main/java/co/mcsniper/mcsniper/sniper/ResponseLog.java)**.
+
+![alt text](https://www.kthisiscvpv.com/sre8e1578632504h9nZ9.png "Response Sample")
 
 ### Automated Updates and Restarts:
 We make frequent updates to our software. We've hooked and enabled **Travis CI** for automated rebuilding and releases. When a new release is detected, the program will automatically download the new update and restart the system. See **[Updater (...)](/src/main/java/co/mcsniper/mcsniper/util/Updater.java)**.
